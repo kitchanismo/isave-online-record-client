@@ -1,0 +1,76 @@
+import http from './httpService'
+import jwtDecode from 'jwt-decode'
+
+function saveJwt({ token, refreshToken }) {
+  localStorage.setItem('access-token', token)
+  localStorage.setItem('refresh-token', refreshToken)
+}
+
+async function login(user) {
+  return await http.post('/auth/login', user).then(data => {
+    saveJwt(data.data.jwt)
+  })
+}
+
+async function signUp(user) {
+  const { jwt } = await http.post('/auth/sign-up', user).then(data => data.data)
+
+  if (!jwt) return false
+
+  saveJwt(jwt)
+  return true
+}
+
+async function logout() {
+  http.setJwt(jwt())
+  removeTokens()
+  await http.post('/token/revoke', { refreshToken: jwt().refreshToken })
+}
+
+function removeTokens() {
+  localStorage.removeItem('refresh-token')
+  localStorage.removeItem('access-token')
+}
+
+function getDecodeToken() {
+  try {
+    const token = localStorage.getItem('access-token')
+    return { ...jwtDecode(token) }
+  } catch (ex) {
+    return null
+  }
+}
+
+const getCurrentUser = () =>
+  getDecodeToken() ? { ...getDecodeToken().data } : null
+
+const isValidUser = () => (getDecodeToken() ? true : false)
+
+const isAdmin = () => (getDecodeToken() ? getDecodeToken().data.isAdmin : null)
+
+function isUsernameTaken(username) {
+  return http.get('/auth/is-taken?username=' + username).then(data => data.data)
+}
+
+function isEmailTaken(email) {
+  return http.get('/auth/is-taken?email=' + email).then(data => data.data)
+}
+
+const jwt = () => {
+  return {
+    token: localStorage.getItem('access-token'),
+    refreshToken: localStorage.getItem('refresh-token')
+  }
+}
+
+export default {
+  login,
+  signUp,
+  logout,
+  getCurrentUser,
+  isUsernameTaken,
+  isEmailTaken,
+  jwt,
+  isValidUser,
+  isAdmin
+}

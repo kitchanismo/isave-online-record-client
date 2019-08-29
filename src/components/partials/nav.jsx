@@ -11,9 +11,10 @@ const Nav = props => {
     <React.Fragment>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
-          <Link className="navbar-brand bg-dark" to="/">
-            iSAVE: Online Record Management System
-          </Link>
+          <h5 className="text-white">
+            <span className="text-warning">i</span>SAVE: Online Record
+            Management System
+          </h5>
           <button
             className="navbar-toggler"
             type="button"

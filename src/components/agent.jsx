@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
 import Chart from 'react-apexcharts'
+import Form from './partials/form'
+import Joi from 'joi-browser'
+import Logo from './partials/logo'
 
-const Dashboard = () => {
+const Agent = () => {
   const [optionsSales, setOptionsSales] = useState({
     theme: {
       palette: 'palette6'
@@ -110,6 +113,18 @@ const Dashboard = () => {
     }
   })
 
+  const [user, setUser] = useState({ username: '', password: '' })
+  const [errors, setErrors] = useState({})
+
+  const schema = {
+    username: Joi.string()
+      .required()
+      .label('Username'),
+    password: Joi.string()
+      .required()
+      .label('Password')
+  }
+
   const [optionsFSF, setOptionsFSF] = useState({
     theme: {
       palette: 'palette6'
@@ -171,6 +186,8 @@ const Dashboard = () => {
     }
   ])
 
+  const handleSubmit = async (e, data) => {}
+
   return (
     <React.Fragment>
       <main
@@ -178,37 +195,73 @@ const Dashboard = () => {
         className="dashboard col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 bg-light border border-secondary"
       >
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-          <h1 className="h2">Dashboard</h1>
+          <h1 className="h2">Agent</h1>
         </div>
-        <div className="col-12 offset-2 mb-5">
-          <Chart
-            type="line"
-            options={optionsSales}
-            series={series}
-            width="600"
-          />
-        </div>
+
         <div className="row">
           <div className="col-6">
-            <Chart
-              type="line"
-              options={optionsGPA}
-              series={series}
-              width="400"
-            />
+            <div className="mb-5">
+              <Chart
+                type="line"
+                options={optionsSales}
+                series={series}
+                width="400"
+              />
+            </div>
+            <div className="">
+              <Chart
+                type="line"
+                options={optionsGPA}
+                series={series}
+                width="400"
+              />
+            </div>
+            <div className="">
+              <Chart
+                type="line"
+                options={optionsFSF}
+                series={series}
+                width="400"
+              />
+            </div>
           </div>
           <div className="col-6">
-            <Chart
-              type="line"
-              options={optionsFSF}
-              series={series}
-              width="400"
-            />
+            <Form
+              data={{ data: user, setData: setUser }}
+              errors={{ errors, setErrors }}
+              onSubmit={handleSubmit}
+              schema={schema}
+            >
+              {({ renderInput }) => {
+                return (
+                  <React.Fragment>
+                    <div className="col-12 pt-0 p-2 pr-5 ">
+                      {renderInput('firstname', 'Firstname')}
+                      {renderInput('middlename', 'Middlename')}
+                      {renderInput('lastname', 'Lastname')}
+                      <button className="btn btn-primary btn-block" name="back">
+                        Add Client
+                      </button>
+                      <div className="logo mt-4 border border-secondary" />
+                    </div>
+                  </React.Fragment>
+                )
+              }}
+            </Form>
           </div>
         </div>
+
         <style jsx="">{`
           .dashboard {
             border-radius: 0px 7px 0 0;
+          }
+          .col-6 {
+            padding: 0;
+          }
+          .logo {
+            width: auto;
+            height: 480px;
+            border-radius: 7px;
           }
         `}</style>
       </main>
@@ -216,4 +269,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default Agent

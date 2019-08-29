@@ -23,7 +23,7 @@ const Login = ({ auth, ...props }) => {
     try {
       await auth.login(data)
       toast.success(`Welcome, ${capitalize(data.username)}`)
-      props.history.replace('/dashboard')
+      props.history.replace('/home')
     } catch ({ response }) {
       if (response && response.status === 401) {
         toast.error(response.data.status.errors)
@@ -38,8 +38,10 @@ const Login = ({ auth, ...props }) => {
   return (
     <React.Fragment>
       <div className="row mt-5">
-        <Logo />
-        <div className="col-4">
+        <div className="offset-2 col-4 mr-2">
+          <Logo />
+        </div>
+        <div className="col-4 ml-2">
           <h1>Login</h1>
           <Form
             data={{ data: user, setData: setUser }}

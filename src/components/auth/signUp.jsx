@@ -127,8 +127,6 @@ const SignUp = ({ auth, ...props }) => {
       branch_id: selectedBranch ? selectedBranch.id : 0
     }
 
-    console.log(user)
-
     try {
       await auth.signUp(user)
 

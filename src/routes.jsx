@@ -12,11 +12,11 @@ import GuestRoute from './components/partials/guestRoute'
 const Routes = () => {
   return (
     <Switch>
-      <AuthRoute path="/dashboard" component={Home} />
+      <AuthRoute path="/home" component={Home} />
       <GuestRoute path="/login" component={Login} />
       <GuestRoute path="/sign-up" component={SignUp} />
       <Route path="/not-found" component={NotFound} />>
-      <Redirect from="/" exact to="/dashboard" />
+      <Redirect from="/" exact to="/home" />
       <Redirect to="/not-found" />
     </Switch>
   )

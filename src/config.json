@@ -1,5 +1,5 @@
 {
-  "appUrl": "http://localhost:3333",
+  "appUrl": "https://isave-online-record.herokuapp.com",
   "pagination": {
     "perPage": 3,
     "pageNumbers": 3

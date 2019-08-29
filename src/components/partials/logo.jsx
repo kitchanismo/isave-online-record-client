@@ -3,12 +3,11 @@ import React, { Component } from 'react'
 const Logo = () => {
   return (
     <React.Fragment>
-      <div className="offset-2 col-4">
-        <div className="logo mt-2 border border-warning" />
-      </div>
+      <div className="logo mt-2 border border-secondary" />
+
       <style jsx="">{`
         .logo {
-          width: 90%;
+          width: 100%;
           height: 100%;
           border-radius: 7px;
         }

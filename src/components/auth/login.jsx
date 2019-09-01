@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import Joi from 'joi-browser'
-import { capitalize } from '../../services/utilsService'
+import { cap } from '../../services/utilsService'
 import { toast } from 'react-toastify'
 import withAuth from '../hoc/withAuth'
-import Form from '../partials/form'
-import Logo from '../partials/logo'
+import Form from '../common/form'
+import Logo from '../common/logo'
 
 const Login = ({ auth, ...props }) => {
   const [user, setUser] = useState({ username: '', password: '' })
@@ -22,8 +22,8 @@ const Login = ({ auth, ...props }) => {
   const handleSubmit = async (e, data) => {
     try {
       await auth.login(data)
-      toast.success(`Welcome, ${capitalize(data.username)}`)
-      props.history.replace('/home')
+      toast.success(`Welcome, ${cap(data.username)}`)
+      props.history.replace('/')
     } catch ({ response }) {
       if (response && response.status === 401) {
         toast.error(response.data.status.errors)
@@ -37,12 +37,13 @@ const Login = ({ auth, ...props }) => {
 
   return (
     <React.Fragment>
-      <div className="row mt-5">
-        <div className="offset-2 col-4 mr-2">
+      <div className="row mt-3 mb-3 border border-secondary">
+        <div className="col-8 p-0">
           <Logo />
         </div>
-        <div className="col-4 ml-2">
-          <h1>Login</h1>
+        <div className="col-4 p-3 pt-2">
+          <h3>Login</h3>
+          <hr></hr>
           <Form
             data={{ data: user, setData: setUser }}
             errors={{ errors, setErrors }}
@@ -52,8 +53,8 @@ const Login = ({ auth, ...props }) => {
             {({ renderInput, renderButton }) => {
               return (
                 <React.Fragment>
-                  {renderInput('username', 'Username')}
-                  {renderInput('password', 'Password', 'password')}
+                  {renderInput('username', 'Username', 'text', 'fa-user')}
+                  {renderInput('password', 'Password', 'password', 'fa-key')}
                   {renderButton('Login', null, 'Logging in...', true)}
                   <p className="mt-3 text-center">or</p>
                 </React.Fragment>
@@ -69,10 +70,57 @@ const Login = ({ auth, ...props }) => {
           </button>
         </div>
       </div>
+
+      <div className="row mb-3 ">
+        <div className="card text-center border border-secondary">
+          <div className="card-header bg-dark text-white">Featured</div>
+          <div className="card-body">
+            <div className="row">
+              <div className="col-sm-4">
+                <div className="card">
+                  <div className="card-body">
+                    <h5 className="card-title">Special title treatment</h5>
+                    <p className="card-text">
+                      It's a broader card with text below as a natural lead-in
+                      to extra content. This content is a little longer.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-sm-4">
+                <div className="card">
+                  <div className="card-body">
+                    <h5 className="card-title">Special title treatment</h5>
+                    <p className="card-text">
+                      It's a broader card with text below as a natural lead-in
+                      to extra content. This content is a little longer.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-sm-4">
+                <div className="card">
+                  <div className="card-body">
+                    <h5 className="card-title">Special title treatment</h5>
+                    <p className="card-text">
+                      It's a broader card with text below as a natural lead-in
+                      to extra content. This content is a little longer.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="card-footer text-muted">Copyright 2019</div>
+        </div>
+      </div>
+
       <style jsx="">{`
-        .col-4 {
-          padding: 0;
+        .row {
+          border-radius: 5px !important;
+          background-color: white;
         }
+        .col-8;
       `}</style>
     </React.Fragment>
   )

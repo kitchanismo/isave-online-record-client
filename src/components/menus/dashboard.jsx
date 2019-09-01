@@ -185,7 +185,7 @@ const Dashboard = () => {
             type="line"
             options={optionsSales}
             series={series}
-            width="600"
+            width="550"
           />
         </div>
         <div className="row">

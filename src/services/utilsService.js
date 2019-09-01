@@ -23,7 +23,7 @@ export const createArray = (start, end) => {
 }
 
 export const mapToSelect = ({ id, name }) => {
-  return { id, label: capitalize(name), value: name }
+  return { id, label: cap(name), value: name }
 }
 
-export const capitalize = str => _.startCase(str)
+export const cap = str => _.startCase(str)

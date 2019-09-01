@@ -1,17 +1,18 @@
 import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import auth from '../../services/authService'
-import { capitalize } from '../../services/utilsService'
+import { cap } from '../../services/utilsService'
 
 const Nav = props => {
   const handleLogout = async () => {
     await auth.logout()
   }
+
   return (
     <React.Fragment>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
-          <h5 className="text-white">
+          <h5 className="text-white mt-1">
             <span className="text-warning">i</span>SAVE: Online Record
             Management System
           </h5>
@@ -38,7 +39,9 @@ const Nav = props => {
                   <i className="fa fa-user text-warning" />
                   <li className="nav-item">
                     <NavLink className="nav-link active" to="/home">
-                      {capitalize(auth.getCurrentUser().username)}
+                      {cap(auth.getCurrentUser().username) +
+                        ' - ' +
+                        cap(auth.getCurrentUser().position)}
                     </NavLink>
                   </li>
                   <li className="nav-item">

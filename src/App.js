@@ -1,6 +1,6 @@
 import React from 'react'
 import { ToastContainer } from 'react-toastify'
-import Nav from './components/partials/nav'
+import Nav from './components/common/nav'
 import Routes from './routes'
 
 import './App.css'
@@ -10,7 +10,7 @@ const App = () => {
   return (
     <React.Fragment>
       <Nav />
-      <ToastContainer autoClose={3000} />
+      <ToastContainer autoClose={5000} />
       <div className="container">
         <Routes />
       </div>

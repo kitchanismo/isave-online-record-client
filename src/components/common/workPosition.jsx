@@ -34,6 +34,7 @@ const WorkPosition = props => {
           .work-position {
             border-radius: 7px;
             height: 200px;
+            background-color: white;
           }
         `}</style>
       </div>

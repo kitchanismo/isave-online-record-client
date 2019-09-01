@@ -33,3 +33,26 @@ export async function getManagers(branchId) {
       })
     })
 }
+
+export function getPagedUsers(num, limit, search = '') {
+  return http
+    .get(`/api/users/page/${num}?limit=${limit}&search=${search}`)
+    .then(data => data.data.data)
+}
+
+export function verifyUser(id) {
+  return http.get(`/api/users/verify/${id}`).then(data => data.data.data)
+}
+
+export function statusCount() {
+  return http.get(`/api/users/status-count`).then(data => data.data.data)
+}
+
+export function getUser(id) {
+  return http.get(`/api/users/${id}`).then(data => data.data.user)
+}
+
+export function deleteUser(id) {
+  console.log(id)
+  return http.delete(`/api/users/${id}`).then(data => data.data)
+}

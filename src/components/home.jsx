@@ -1,26 +1,38 @@
 import React, { useState, memo } from 'react'
-import SideMenu from './partials/sideMenu'
-import Dashboard from './dashboard'
-import Branch from './branch'
-import Agent from './agent'
-import Users from './users'
-import Reports from './reports'
-import Footer from './partials/footer'
+import SideMenu from './common/sideMenu'
+import Dashboard from './menus/dashboard'
+import Branch from './menus/branch'
+import Agent from './menus/agent'
+import Users from './menus/users/index'
+import Reports from './menus/reports'
+import Footer from './common/footer'
+import UserProvider from '../providers/userProvider'
+import ViewUser from './menus/users/view'
+import EditUser from './menus/users/edit'
 
-const Home = () => {
+const Home = ({ menu, sub, ...props }) => {
   return (
     <React.Fragment>
       <div className="container-fluid">
         <div className="row">
           <SideMenu>
-            {({ menu }) => {
-              if (menu.dashboard) return <Dashboard />
-              if (menu.branch) return <Branch />
-              if (menu.agent) return <Agent />
-              if (menu.users) return <Users />
-              if (menu.reports) return <Reports />
-            }}
+            {menu === 'dashboard' && <Dashboard {...props} />}
+            {menu === 'branches' && <Branch {...props} />}
+            {menu === 'agents' && <Agent {...props} />}
+            {menu === 'users' && (
+              <React.Fragment>
+                {sub === 'viewUser' && <ViewUser {...props} />}
+                {sub === 'editUser' && <EditUser {...props} />}
+                {!sub && (
+                  <UserProvider>
+                    <Users {...props} />
+                  </UserProvider>
+                )}
+              </React.Fragment>
+            )}
+            {menu === 'reports' && <Reports />}
           </SideMenu>
+
           <Footer></Footer>
         </div>
       </div>

@@ -15,10 +15,11 @@ async function login(user) {
 async function signUp(user) {
   const { jwt } = await http.post('/auth/sign-up', user).then(data => data.data)
 
-  if (!jwt) return false
+  // if (!jwt) return false
 
-  saveJwt(jwt)
-  return true
+  // saveJwt(jwt)
+  // return true
+  return false
 }
 
 async function logout() {
@@ -46,7 +47,11 @@ const getCurrentUser = () =>
 
 const isValidUser = () => (getDecodeToken() ? true : false)
 
-const isAdmin = () => (getDecodeToken() ? getDecodeToken().data.isAdmin : null)
+const isAdminOrManager = () => {
+  const position = getDecodeToken().data.position
+
+  return position === 'manager' || position === 'admin'
+}
 
 function isUsernameTaken(username) {
   return http.get('/auth/is-taken?username=' + username).then(data => data.data)
@@ -72,5 +77,5 @@ export default {
   isEmailTaken,
   jwt,
   isValidUser,
-  isAdmin
+  isAdminOrManager
 }

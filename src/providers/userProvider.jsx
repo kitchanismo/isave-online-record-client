@@ -1,9 +1,9 @@
 import React, { memo } from 'react'
 import usePagination from '../hooks/usePagination'
-import { AnimeContext } from '../context'
+import { UserContext } from '../context'
 import { pagination } from '../config.json'
 import { sortBy } from '../services/utilsService'
-import { getPagedAnimes, deleteAnime } from '../services/animeService'
+import { getPagedUsers, deleteUser } from '../services/userService'
 import {
   SET_REFRESH,
   SET_ITEMS,
@@ -11,13 +11,13 @@ import {
   SEARCH_ITEMS,
   SET_START,
   SET_END
-} from './../hooks/types'
+} from '../hooks/types'
 
-const AnimeProvider = props => {
+const UserProvider = props => {
   const {
-    state: { pageNum, items: animes, pages, total, ...rest },
+    state: { pageNum, items: users, pages, total, ...rest },
     dispatch
-  } = usePagination({ request: getPagedAnimes, take: pagination.perPage })
+  } = usePagination({ request: getPagedUsers, take: pagination.perPage })
 
   const handleRefresh = () => {
     dispatch({ type: SET_REFRESH, payload: toggle => !toggle })
@@ -27,24 +27,24 @@ const AnimeProvider = props => {
     dispatch({ type: SET_PAGENUM, payload: pageNum })
   }
 
-  const handleDelete = async anime => {
-    let originalAnimes = [...animes]
+  const handleDelete = async user => {
+    let originalUsers = [...users]
 
     try {
-      const _animes = originalAnimes.filter(a => a.id !== anime.id)
+      const _users = originalUsers.filter(a => a.id !== user.id)
 
-      dispatch({ type: SET_ITEMS, payload: _animes })
-
-      await deleteAnime(anime.id)
-      return _animes.length > 0
+      dispatch({ type: SET_ITEMS, payload: _users })
+      console.log('hit3', user.id)
+      await deleteUser(user.id)
+      return _users.length > 0
     } catch (error) {
-      dispatch({ type: SET_ITEMS, payload: originalAnimes })
-      return originalAnimes.length > 0
+      dispatch({ type: SET_ITEMS, payload: originalUsers })
+      return originalUsers.length > 0
     }
   }
 
   const handleSort = sortColumn => {
-    dispatch({ type: SET_ITEMS, payload: sortBy(animes, sortColumn) })
+    dispatch({ type: SET_ITEMS, payload: sortBy(users, sortColumn) })
   }
 
   const handleSearch = title => {
@@ -60,9 +60,9 @@ const AnimeProvider = props => {
   }
 
   return (
-    <AnimeContext.Provider
+    <UserContext.Provider
       value={{
-        state: { animes, pages, pageNum, total, ...rest },
+        state: { users, pages, pageNum, total, ...rest },
         onDelete: handleDelete,
         onRefresh: handleRefresh,
         onPageChange: handlePageChange,
@@ -73,8 +73,8 @@ const AnimeProvider = props => {
       }}
     >
       {props.children}
-    </AnimeContext.Provider>
+    </UserContext.Provider>
   )
 }
 
-export default memo(AnimeProvider)
+export default memo(UserProvider)

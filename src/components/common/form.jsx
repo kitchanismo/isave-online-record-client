@@ -72,7 +72,7 @@ const Form = props => {
     return newErrors
   }
 
-  const renderInput = (name, label, type = 'text', rest) => {
+  const renderInput = (name, label, type = 'text', icon, rest) => {
     return (
       <Input
         type={type}
@@ -81,6 +81,7 @@ const Form = props => {
         label={label}
         onChange={handleChange}
         error={errors[name]}
+        icon={icon}
         {...rest}
       />
     )

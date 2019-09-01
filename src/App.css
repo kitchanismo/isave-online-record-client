@@ -4,6 +4,8 @@
 }
 body {
   font-family: 'Montserrat', sans-serif;
+  font-size: 0.875rem;
+  background-color: gold !important;
 }
 
 /* .fa {
@@ -29,10 +31,6 @@ a:link {
 .react-datepicker-wrapper,
 .react-datepicker__input-container {
   width: 100% !important;
-}
-
-body {
-  font-size: 0.875rem;
 }
 
 .feather {

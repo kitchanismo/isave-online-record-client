@@ -1,11 +1,11 @@
 import React, { Component, useState, useEffect } from 'react'
 import Joi from 'joi-browser'
-import Form from '../partials/form'
+import Form from '../common/form'
 import { getBranches, getManagers } from '../../services/userService'
 import { toast } from 'react-toastify'
-import { capitalize } from '../../services/utilsService'
+import { cap } from '../../services/utilsService'
 import withAuth from './../hoc/withAuth'
-import WorkPosition from './../partials/workPosition'
+import WorkPosition from './../common/workPosition'
 
 const SignUp = ({ auth, ...props }) => {
   const [user, setUser] = useState({
@@ -130,7 +130,7 @@ const SignUp = ({ auth, ...props }) => {
     try {
       await auth.signUp(user)
 
-      toast.success('Welcome, ' + capitalize(username))
+      toast.success('Successfully created!')
 
       setUser({
         username: '',
@@ -142,9 +142,12 @@ const SignUp = ({ auth, ...props }) => {
         codeNo: '',
         confirmPassword: ''
       })
-      setErrors(_errors)
 
-      props.history.replace('/')
+      setSelectedPosition({})
+      setSelectedBranch({})
+      setSelectedManager({})
+
+      setErrors(_errors)
     } catch ({ response }) {
       if (response && response.status === 400) {
         toast.error(response.data.status.errors)
@@ -167,8 +170,9 @@ const SignUp = ({ auth, ...props }) => {
             {({ renderInput, renderSelect, renderButton }) => {
               return (
                 <React.Fragment>
-                  <div className="row mt-5">
-                    <div className="col-4 p-4 offset-2">
+                  <div className="row mt-3 mb-3 border border-secondary">
+                    <div className="side-content col-4"></div>
+                    <div className="col-4 pl-3 pr-2 pt-3">
                       {renderInput('firstname', 'Firstname')}
                       {renderInput('middlename', 'Middlename')}
                       {renderInput('lastname', 'Lastname')}
@@ -199,16 +203,22 @@ const SignUp = ({ auth, ...props }) => {
                           managers
                         )}
                     </div>
-                    <div className="col-4 p-4">
-                      {renderInput('username', 'Username', {
+                    <div className="col-4 pl-2 pr-3 pt-3">
+                      {renderInput('username', 'Username', 'text', 'fa-user', {
                         onBlur: handleCheckUser
                       })}
-                      {renderInput('email', 'Email', 'email')}
-                      {renderInput('password', 'Password', 'password')}
+                      {renderInput('email', 'Email', 'email', 'fa-envelope')}
+                      {renderInput(
+                        'password',
+                        'Password',
+                        'password',
+                        'fa-key'
+                      )}
                       {renderInput(
                         'confirmPassword',
                         'Confirm Password',
-                        'password'
+                        'password',
+                        'fa-key'
                       )}
                       {renderButton('Sign Up', null, 'Signing in...', true)}
                       <button
@@ -221,6 +231,10 @@ const SignUp = ({ auth, ...props }) => {
                       >
                         Back
                       </button>
+                      <p className="text-primary p-2 ">
+                        *Note: Account needs to verify by admin or manager to
+                        activate
+                      </p>
                     </div>
                   </div>
                 </React.Fragment>
@@ -231,6 +245,14 @@ const SignUp = ({ auth, ...props }) => {
           <style jsx="">{`
             .col-4 {
               padding: 0;
+            }
+            .row {
+              background-color: white;
+              border-radius: 7px;
+            }
+            .side-content {
+              background-color: #343a40;
+              border-radius: 7px 0 0 7px;
             }
           `}</style>
         </React.Fragment>

@@ -10,7 +10,9 @@ import {
   SET_REFRESH,
   SEARCH_ITEMS,
   SET_START,
-  SET_END
+  SET_END,
+  SET_NOT_FOUND,
+  SET_STATUS_COUNT
 } from './types'
 
 const reducer = (state, action) => {
@@ -32,6 +34,10 @@ const reducer = (state, action) => {
       return { ...state, toggle: payload }
     case SEARCH_ITEMS:
       return { ...state, title: payload }
+    case SET_NOT_FOUND:
+      return { ...state, notFound: payload }
+    case SET_STATUS_COUNT:
+      return { ...state, statusCount: payload }
     default:
       return state
   }
@@ -46,13 +52,15 @@ const usePagination = ({
 }) => {
   const initialState = {
     items: [],
+    statusCount: {},
     pageNum: 1,
     pages: 0,
     total: 0,
     take,
     toggle: false,
     start: 1,
-    end: pagination.pageNumbers
+    end: pagination.pageNumbers,
+    notFound: false
   }
   const [{ toggle, title, pageNum, ...rest }, dispatch] = useReducer(
     reducer,
@@ -65,14 +73,15 @@ const usePagination = ({
         dispatch({ type: SET_ITEMS, payload: response[data] })
         dispatch({ type: SET_PAGES, payload: response[pages] })
         dispatch({ type: SET_TOTAL, payload: response[total] })
+        dispatch({ type: SET_STATUS_COUNT, payload: response['statusCount'] })
+        dispatch({ type: SET_NOT_FOUND, payload: false })
       })
       .catch(({ response }) => {
         if (response && response.status === 404) {
           dispatch({ type: SET_ITEMS, payload: [] })
           dispatch({ type: SET_PAGES, payload: 0 })
-          dispatch({ type: SET_TOTAL, payload: 0 })
           dispatch({ type: SET_PAGENUM, payload: 1 })
-          toast.error('No result/s found')
+          dispatch({ type: SET_NOT_FOUND, payload: true })
         }
       })
   }, [toggle, title, pageNum])

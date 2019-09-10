@@ -15,7 +15,7 @@ const Nav = props => {
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
           <h5 className="text-white mt-1">
-            <span style={{ color: theme.secondary }}>_i</span>
+            _<span style={{ color: theme.secondary }}>i</span>
             SAVE_: Online Record Management System
           </h5>
           <button

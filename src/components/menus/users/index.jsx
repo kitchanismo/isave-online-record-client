@@ -7,6 +7,7 @@ import { verifyUser } from '../../../services/userService'
 import SearchForm from '../../common/searchForm'
 import { pagination } from '../../../config.json'
 import { Link } from 'react-router-dom'
+import Spinner from '../../common/spinner'
 
 const Users = props => {
   const {
@@ -37,7 +38,8 @@ const Users = props => {
       path: 'lastname',
       key: 'fullname',
       label: 'Fullname',
-      content: user => `${user.firstname}, ${user.middlename} ${user.lastname}`
+      content: user =>
+        `${user.profile.firstname}, ${user.profile.middlename} ${user.profile.lastname}`
     },
 
     {
@@ -45,10 +47,14 @@ const Users = props => {
       label: 'Position'
     },
     {
-      path: 'branch.name',
-      key: 'branch',
-      label: 'Branch',
-      content: ({ branch }) => (branch ? branch.name : '')
+      path: 'profile.branch.name',
+      label: 'Branch'
+    },
+    {
+      path: 'profile.codeNo',
+      key: 'codeNo',
+      label: 'Code #',
+      content: ({ profile }) => profile.codeNo
     },
     {
       path: 'status',
@@ -183,7 +189,7 @@ const Users = props => {
       >
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
           <h1 className="h2">Users Management</h1>
-          <span className="h6">
+          {/* <span className="h6">
             Total:
             <span className="h6 text-secondary">{total}</span>
           </span>
@@ -194,7 +200,7 @@ const Users = props => {
           <span className="h6 ">
             Unverify:
             <span className="h6 text-secondary">{statusCount.unverify}</span>
-          </span>
+          </span> */}
         </div>
 
         <div className="col-12">
@@ -208,8 +214,12 @@ const Users = props => {
             sortColumn={sortColumn}
             onSort={handleSort}
           />
-          {users.length === 0 && !notFound && <h6>Loading ...</h6>}
-          {notFound && <h6>{`No records found!`}</h6>}
+          {users.length === 0 && !notFound && (
+            <div className="col-12 d-flex justify-content-center pt-5 ">
+              <Spinner />
+            </div>
+          )}
+          {notFound && <h6>No records found!</h6>}
           {users.length > 0 && <Paginate />}
         </div>
 

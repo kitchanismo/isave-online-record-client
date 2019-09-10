@@ -5,7 +5,15 @@ import { appUrl } from '../../../config.json'
 
 const ViewUser = props => {
   const { id } = props.match.params
-  const [user, setUser] = useState({})
+  const [user, setUser] = useState({
+    username: '',
+    profile: {
+      firstname: '',
+      middlename: '',
+      lastname: '',
+      branch: { manager: '' }
+    }
+  })
 
   useEffect(() => {
     getUser(id)
@@ -42,9 +50,11 @@ const ViewUser = props => {
                 alt=""
               />
               <div className="card-body">
-                <h5 className="card-title">{`${cap(user.lastname)}, ${cap(
-                  user.firstname
-                )} ${cap(user.middlename)}`}</h5>
+                <h5 className="card-title">{`${cap(
+                  user.profile.lastname
+                )}, ${cap(user.profile.firstname)} ${cap(
+                  user.profile.middlename
+                )}`}</h5>
                 <p className="card-subtitle">{cap(user.username)}</p>
                 <span
                   className={`mt-4 badge badge-${
@@ -63,21 +73,28 @@ const ViewUser = props => {
                 <br></br>
                 <p className="card-subtitle">
                   Firstname:{' '}
-                  <span className="text-secondary">{cap(user.firstname)}</span>
+                  <span className="text-secondary">
+                    {cap(user.profile.firstname)}
+                  </span>
                 </p>
                 <br></br>
                 <p className="card-subtitle">
                   Middlename:{' '}
-                  <span className="text-secondary">{cap(user.middlename)}</span>
+                  <span className="text-secondary">
+                    {cap(user.profile.middlename)}
+                  </span>
                 </p>
                 <br></br>
                 <p className="card-subtitle">
                   Lastname:{' '}
-                  <span className="text-secondary">{cap(user.lastname)}</span>
+                  <span className="text-secondary">
+                    {cap(user.profile.lastname)}
+                  </span>
                 </p>
                 <br></br>
                 <p className="card-subtitle">
-                  Email: <span className="text-secondary">{user.email}</span>
+                  Email:{' '}
+                  <span className="text-secondary">{user.profile.email}</span>
                 </p>
               </div>
             </div>
@@ -93,20 +110,22 @@ const ViewUser = props => {
                 <p className="card-subtitle">
                   Branch:{' '}
                   <span className="text-secondary">
-                    {cap(user.branch ? user.branch.name : '')}
+                    {cap(user.profile.branch ? user.profile.branch.name : '')}
                   </span>
                 </p>
                 <br></br>
                 <p className="card-subtitle">
                   Code Number:{' '}
-                  <span className="text-secondary">{cap(user.codeNo)}</span>
+                  <span className="text-secondary">
+                    {cap(user.profile.codeNo)}
+                  </span>
                 </p>
                 <br></br>
                 {isAgent() && (
                   <p className="card-subtitle">
                     Under by:{' '}
                     <span className="text-secondary">
-                      {cap(user.agent ? user.agent.manager : '') + ' - manager'}
+                      {cap(user.profile.branch.manager) + ' - manager'}
                     </span>
                   </p>
                 )}

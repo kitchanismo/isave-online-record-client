@@ -238,7 +238,10 @@ const Agent = () => {
                       {renderInput('firstname', 'Firstname')}
                       {renderInput('middlename', 'Middlename')}
                       {renderInput('lastname', 'Lastname')}
-                      <button className="btn btn-primary btn-block" name="back">
+                      <button
+                        className="btn btn-grad-primary btn-block"
+                        name="back"
+                      >
                         Add Client
                       </button>
                       <div className="logo mt-4 border border-secondary" />

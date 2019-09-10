@@ -13,7 +13,12 @@ const Input = ({ name, label, error, icon = '', ...rest }) => {
         <input {...rest} name={name} id={name} className="form-control" />
       </div>
       {/* {error && <div className="alert p-2 mt-2 alert-danger">{error}</div>} */}
-      {error && <p className="text-danger p-2 ">{error}</p>}
+      {error && <p className="error-message text-danger p-1">{error}</p>}
+      <style jsx="">{`
+        .error-message {
+          font-size: 13px;
+        }
+      `}</style>
     </div>
   )
 }

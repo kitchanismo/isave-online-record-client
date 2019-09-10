@@ -63,7 +63,7 @@ const Login = ({ auth, ...props }) => {
           </Form>
           <button
             onClick={navigateSignUp}
-            className="btn btn-secondary btn-block"
+            className="btn btn-grad-secondary btn-block"
             name="createAccount"
           >
             Create Account

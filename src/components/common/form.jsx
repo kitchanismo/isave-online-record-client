@@ -107,7 +107,7 @@ const Form = props => {
     return (
       <button
         disabled={validate() || Object.keys(errors).length > 0 || isDisable}
-        className={`btn btn-primary mt-3 ${isBlock ? 'btn-block' : ''}`}
+        className={`btn btn-grad-primary mt-3 ${isBlock ? 'btn-block' : ''}`}
       >
         <span className={`${icon} mr-1`} />
         {isDisable ? labelLoading : label}

@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
+import React from 'react'
 
 const Logo = () => {
   return (
     <React.Fragment>
-      <div className="logo" />
+      <div className="logo"></div>
 
       <style jsx="">{`
         .logo {

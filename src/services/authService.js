@@ -53,6 +53,12 @@ const isAdminOrManager = () => {
   return position === 'manager' || position === 'admin'
 }
 
+const isAdmin = () => {
+  const position = getDecodeToken().data.position
+
+  return position === 'admin'
+}
+
 function isUsernameTaken(username) {
   return http.get('/auth/is-taken?username=' + username).then(data => data.data)
 }
@@ -77,5 +83,6 @@ export default {
   isEmailTaken,
   jwt,
   isValidUser,
+  isAdmin,
   isAdminOrManager
 }

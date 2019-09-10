@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Joi from 'joi-browser'
-import {
-  getBranches,
-  getManagers,
-  getUser
-} from '../../../services/userService'
+import { getBranches, getManager, getUser } from '../../../services/userService'
 import { toast } from 'react-toastify'
 import { cap } from '../../../services/utilsService'
 import withAuth from '../../hoc/withAuth'
@@ -18,39 +14,34 @@ const EditUser = ({ auth, ...props }) => {
     firstname: '',
     middlename: '',
     lastname: '',
+    manager: '',
     codeNo: ''
   })
 
   useEffect(() => {
-    getUser(id).then(user => {
+    getUser(id).then(({ profile, username, position }) => {
       setUser({
-        username: user.username,
-        email: user.email,
-        firstname: user.firstname,
-        middlename: user.middlename,
-        lastname: user.lastname,
-        codeNo: user.codeNo
-      })
-      getManagers(user.branch.id).then(managers => {
-        setManagers(managers)
-      })
-      getBranches().then(branches => {
-        setBranches(branches)
+        username,
+        email: profile.email,
+        firstname: profile.firstname,
+        middlename: profile.middlename,
+        lastname: profile.lastname,
+        codeNo: profile.codeNo,
+        manager: profile.branch.manager
       })
       setSelectedPosition({
-        id: user.position === 'sales officer' ? 1 : 2,
-        value: user.position,
-        label: cap(user.position)
+        id: position === 'sales officer' ? 1 : 2,
+        value: position,
+        label: cap(position)
       })
       setSelectedBranch({
-        id: user.branch.id,
-        value: user.branch.name,
-        label: cap(user.branch.name)
+        id: profile.branch_id,
+        value: profile.branch.name,
+        label: cap(profile.branch.name)
       })
-      setSelectedManager({
-        id: user.agent ? user.agent.id : 0,
-        value: user.agent ? user.agent.manager : '',
-        label: user.agent ? cap(user.agent.manager) : ''
+
+      getBranches('/api/branches').then(branches => {
+        setBranches(branches)
       })
     })
     //.catch(() => props.history.replace('/not-found'))
@@ -70,11 +61,9 @@ const EditUser = ({ auth, ...props }) => {
   ]
 
   const [branches, setBranches] = useState([])
-  const [managers, setManagers] = useState([])
 
   const [selectedPosition, setSelectedPosition] = useState([])
   const [selectedBranch, setSelectedBranch] = useState(null)
-  const [selectedManager, setSelectedManager] = useState(null)
 
   const [errors, setErrors] = useState({})
 
@@ -95,6 +84,7 @@ const EditUser = ({ auth, ...props }) => {
     lastname: Joi.string()
       .required()
       .label('Lastname'),
+    manager: Joi.optional(),
     codeNo: Joi.optional()
   }
 
@@ -103,19 +93,14 @@ const EditUser = ({ auth, ...props }) => {
 
   const handleChangeBranch = selectedBranch => {
     setSelectedBranch(selectedBranch)
-    setSelectedManager(null)
-    getManagers(selectedBranch.id).then(managers => {
-      setManagers(managers)
+    getManager(selectedBranch.id).then(username => {
+      setUser({ ...user, manager: username })
     })
   }
-
-  const handleChangeManager = selectedManager =>
-    setSelectedManager(selectedManager)
 
   const handleSubmit = async (e, user) => alert('Under construction!')
 
   const isAgent = () => {
-    console.log(selectedPosition)
     return (
       selectedPosition.value !== 'manager' && selectedPosition.value !== 'admin'
     )
@@ -162,22 +147,18 @@ const EditUser = ({ auth, ...props }) => {
                     )}
 
                     {isAgent() &&
-                      renderSelect(
-                        'manager',
-                        'Manager',
-                        selectedManager,
-                        handleChangeManager,
-                        managers
-                      )}
+                      renderInput('manager', 'Manager', 'manager', '', {
+                        disabled: true
+                      })}
                   </div>
                   <div className="col-6 pl-3 pr-5 pt-4">
                     {renderInput('username', 'Username', 'text', 'fa-user')}
                     {renderInput('email', 'Email', 'email', 'fa-envelope')}
                     {renderButton('Update', null, 'Updating...', true)}
 
-                    <p className="text-primary p-2 ">
+                    {/* <p className="text-primary p-2 ">
                       *Note: Only admin can update the other managers account
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               </React.Fragment>

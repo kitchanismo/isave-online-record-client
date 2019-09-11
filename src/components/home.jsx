@@ -1,7 +1,7 @@
 import React, { useState, memo } from 'react'
 import SideMenu from './common/sideMenu'
-import Dashboard from './menus/dashboard'
-import Branch from './menus/branch'
+import Dashboard from './menus/dashboard/index'
+import Branch from './menus/branch/index'
 import Agent from './menus/agent'
 import Users from './menus/users/index'
 import Reports from './menus/reports'
@@ -18,7 +18,6 @@ const Home = ({ menu, sub, ...props }) => {
           <SideMenu>
             {menu === 'dashboard' && <Dashboard {...props} />}
             {menu === 'branches' && <Branch {...props} />}
-            {menu === 'agents' && <Agent {...props} />}
             {menu === 'users' && (
               <React.Fragment>
                 {sub === 'viewUser' && <ViewUser {...props} />}

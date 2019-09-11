@@ -13,14 +13,16 @@ export async function getPositions() {
     })
 }
 
-export async function getBranches(url) {
+export async function getBranches(url, isMap = false) {
   return await http
     .get(url)
     .then(data => data.data)
     .then(({ branches }) => {
-      return branches.map(branch => {
-        return mapToSelect(branch)
-      })
+      return isMap
+        ? branches
+        : branches.map(branch => {
+            return mapToSelect(branch)
+          })
     })
 }
 

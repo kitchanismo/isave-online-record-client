@@ -215,9 +215,7 @@ const Users = props => {
             onSort={handleSort}
           />
           {users.length === 0 && !notFound && (
-            <div className="col-12 d-flex justify-content-center pt-5 ">
-              <Spinner />
-            </div>
+            <Spinner className="mt-5 pt-5 mb-5" />
           )}
           {notFound && <h6>No records found!</h6>}
           {users.length > 0 && <Paginate />}

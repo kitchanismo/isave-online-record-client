@@ -10,6 +10,7 @@ import { toast } from 'react-toastify'
 import { cap } from '../../services/utilsService'
 import withAuth from './../hoc/withAuth'
 import withWorkPosition from './../hoc/withWorkPosition'
+import Spinner from './../common/spinner'
 
 const SignUp = ({ auth, isForManager, ...props }) => {
   const [user, setUser] = useState({
@@ -37,6 +38,16 @@ const SignUp = ({ auth, isForManager, ...props }) => {
   ]
 
   const [branches, setBranches] = useState([])
+  const [hasBranches, setHasBranches] = useState(false)
+
+  const fetchBranches = (isForManager, setBranches) => {
+    const url = isForManager ? '/api/branches/available' : '/api/branches/taken'
+    getBranches(url).then(branches => {
+      setBranches(branches)
+      setHasBranches(branches.length > 0)
+      console.log(branches.length > 0)
+    })
+  }
 
   useEffect(() => {
     fetchBranches(isForManager, setBranches)
@@ -210,13 +221,15 @@ const SignUp = ({ auth, isForManager, ...props }) => {
                       agents
                     )}
                   {renderInput('codeNo', 'Code Number')}
-                  {renderSelect(
-                    'branch',
-                    'Available Branch',
-                    selectedBranch,
-                    handleChangeBranch,
-                    branches
-                  )}
+                  {!hasBranches && <label>No Available Branch</label>}
+                  {hasBranches &&
+                    renderSelect(
+                      'branch',
+                      'Available Branch',
+                      selectedBranch,
+                      handleChangeBranch,
+                      branches
+                    )}
                   {!isForManager &&
                     renderInput('manager', 'Manager', 'manager', '', {
                       disabled: true
@@ -274,9 +287,3 @@ const SignUp = ({ auth, isForManager, ...props }) => {
 }
 
 export default withWorkPosition(withAuth(SignUp))
-function fetchBranches(isForManager, setBranches) {
-  const url = isForManager ? '/api/branches/available' : '/api/branches/taken'
-  getBranches(url).then(branches => {
-    setBranches(branches)
-  })
-}

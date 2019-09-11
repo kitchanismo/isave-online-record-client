@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import { cap } from '../../../services/utilsService'
 import withAuth from '../../hoc/withAuth'
 import Form from './../../common/form'
+import Spinner from './../../common/spinner'
 
 const EditUser = ({ auth, ...props }) => {
   const { id } = props.match.params
@@ -116,55 +117,57 @@ const EditUser = ({ auth, ...props }) => {
           <h1 className="h2">Edit User</h1>
         </div>
 
-        <Form
-          data={{ data: user, setData: setUser }}
-          errors={{ errors, setErrors }}
-          onSubmit={handleSubmit}
-          schema={schema}
-        >
-          {({ renderInput, renderSelect, renderButton }) => {
-            return (
-              <React.Fragment>
-                <div className="row m-1">
-                  <div className="col-6 pl-5 pr-3 pt-4">
-                    {renderInput('firstname', 'Firstname')}
-                    {renderInput('middlename', 'Middlename')}
-                    {renderInput('lastname', 'Lastname')}
-                    {renderSelect(
-                      'position',
-                      'Position',
-                      selectedPosition,
-                      handleChangePosition,
-                      agents
-                    )}
-                    {renderInput('codeNo', 'Code Number')}
-                    {renderSelect(
-                      'branch',
-                      'Branch',
-                      selectedBranch,
-                      handleChangeBranch,
-                      branches
-                    )}
+        <Spinner isLoaded={user.username !== ''} className="spinner">
+          <Form
+            data={{ data: user, setData: setUser }}
+            errors={{ errors, setErrors }}
+            onSubmit={handleSubmit}
+            schema={schema}
+          >
+            {({ renderInput, renderSelect, renderButton }) => {
+              return (
+                <React.Fragment>
+                  <div className="row m-1">
+                    <div className="col-6 pl-5 pr-3 pt-4">
+                      {renderInput('firstname', 'Firstname')}
+                      {renderInput('middlename', 'Middlename')}
+                      {renderInput('lastname', 'Lastname')}
+                      {renderSelect(
+                        'position',
+                        'Position',
+                        selectedPosition,
+                        handleChangePosition,
+                        agents
+                      )}
+                      {renderInput('codeNo', 'Code Number')}
+                      {renderSelect(
+                        'branch',
+                        'Branch',
+                        selectedBranch,
+                        handleChangeBranch,
+                        branches
+                      )}
 
-                    {isAgent() &&
-                      renderInput('manager', 'Manager', 'manager', '', {
-                        disabled: true
-                      })}
-                  </div>
-                  <div className="col-6 pl-3 pr-5 pt-4">
-                    {renderInput('username', 'Username', 'text', 'fa-user')}
-                    {renderInput('email', 'Email', 'email', 'fa-envelope')}
-                    {renderButton('Update', null, 'Updating...', true)}
+                      {isAgent() &&
+                        renderInput('manager', 'Manager', 'manager', '', {
+                          disabled: true
+                        })}
+                    </div>
+                    <div className="col-6 pl-3 pr-5 pt-4">
+                      {renderInput('username', 'Username', 'text', 'fa-user')}
+                      {renderInput('email', 'Email', 'email', 'fa-envelope')}
+                      {renderButton('Update', null, 'Updating...', true)}
 
-                    {/* <p className="text-primary p-2 ">
+                      {/* <p className="text-primary p-2 ">
                       *Note: Only admin can update the other managers account
                     </p> */}
+                    </div>
                   </div>
-                </div>
-              </React.Fragment>
-            )
-          }}
-        </Form>
+                </React.Fragment>
+              )
+            }}
+          </Form>
+        </Spinner>
 
         <style jsx="">{`
           .dashboard {
@@ -180,6 +183,10 @@ const EditUser = ({ auth, ...props }) => {
           .side-content {
             background-color: #343a40;
             border-radius: 0 5px 5px 0;
+          }
+          .spinner {
+            margin-top: 200px;
+            margin-bottom: 200px;
           }
         `}</style>
       </main>

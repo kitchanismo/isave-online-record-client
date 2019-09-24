@@ -150,6 +150,11 @@ const Reports = props => {
       content: client => formatDate(client.dateInsured)
     },
     {
+      path: 'expiredDate',
+      label: 'Date Expire',
+      content: client => formatDate(client.expiredDate)
+    },
+    {
       key: 'actions',
       label: 'Actions',
       content: client => (
@@ -196,6 +201,11 @@ const Reports = props => {
       path: 'dateInsured',
       label: 'Date Insured',
       content: client => formatDate(client.dateInsured)
+    },
+    {
+      path: 'expiredDate',
+      label: 'Date Expire',
+      content: client => formatDate(client.expiredDate)
     },
     {
       key: 'actions',

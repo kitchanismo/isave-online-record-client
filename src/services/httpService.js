@@ -14,7 +14,7 @@ axios.interceptors.request.use(config => {
   return config
 })
 
-function setJwt({ token }) {
+function sendJwt({ token }) {
   axios.interceptors.request.use(config => {
     config.headers.Authorization = `Bearer ${token}`
 
@@ -28,7 +28,7 @@ export default {
   put: axios.put,
   delete: axios.delete,
   axios,
-  setJwt
+  sendJwt
 }
 
 function throwError(error) {

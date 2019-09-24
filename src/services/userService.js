@@ -34,6 +34,16 @@ export function addBranch(branch) {
   return http.post('/api/branches', branch).then(data => data.data)
 }
 
+export async function addManager(user) {
+  http.sendJwt(auth.jwt())
+  return await http.post('/api/users', user).then(data => data.data)
+}
+
+export async function editUser(id, user) {
+  http.sendJwt(auth.jwt())
+  return await http.put('/api/users/' + id, user).then(data => data.data)
+}
+
 export async function getManager(branchId) {
   // http.setJwt(auth.jwt())
   return await http
@@ -41,29 +51,36 @@ export async function getManager(branchId) {
     .then(data => data.data.fullname)
 }
 
-export function getPagedUsers(num, limit, search = '') {
-  http.setJwt(auth.jwt())
+export function getPagedUsers(num, limit, search = '', status) {
+  http.sendJwt(auth.jwt())
   return http
-    .get(`/api/users/page/${num}?limit=${limit}&search=${search}`)
+    .get(
+      `/api/users/page/${num}?limit=${limit}&status=${status}&search=${search}`
+    )
     .then(data => data.data.data)
 }
 
 export function verifyUser(id) {
-  http.setJwt(auth.jwt())
+  http.sendJwt(auth.jwt())
   return http.get(`/api/users/verify/${id}`).then(data => data.data.data)
 }
 
 export function statusCount() {
-  http.setJwt(auth.jwt())
+  http.sendJwt(auth.jwt())
   return http.get(`/api/users/status-count`).then(data => data.data.data)
 }
 
 export function getUser(id) {
-  http.setJwt(auth.jwt())
+  http.sendJwt(auth.jwt())
   return http.get(`/api/users/${id}`).then(data => data.data.user)
 }
 
+export function getUnverifyUser() {
+  http.sendJwt(auth.jwt())
+  return http.get(`/api/users/unverify`).then(data => data.data.unverify)
+}
+
 export function deleteUser(id) {
-  http.setJwt(auth.jwt())
+  http.sendJwt(auth.jwt())
   return http.delete(`/api/users/${id}`).then(data => data.data)
 }

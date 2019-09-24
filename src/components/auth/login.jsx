@@ -1,14 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import Joi from 'joi-browser'
 import { cap } from '../../services/utilsService'
 import { toast } from 'react-toastify'
 import withAuth from '../hoc/withAuth'
 import Form from '../common/form'
 import Logo from '../common/logo'
+import { UserContext } from '../../context'
 
 const Login = ({ auth, ...props }) => {
   const [user, setUser] = useState({ username: '', password: '' })
   const [errors, setErrors] = useState({})
+
+  const { onRefresh } = useContext(UserContext)
 
   const schema = {
     username: Joi.string()
@@ -22,8 +25,8 @@ const Login = ({ auth, ...props }) => {
   const handleSubmit = async (e, data) => {
     try {
       await auth.login(data)
-      toast.success(`Welcome, ${cap(data.username)}`)
       props.history.replace('/')
+      onRefresh()
     } catch ({ response }) {
       if (response && response.status === 401) {
         toast.error(response.data.status.errors)
@@ -64,9 +67,9 @@ const Login = ({ auth, ...props }) => {
           <button
             onClick={navigateSignUp}
             className="btn btn-grad-secondary btn-block"
-            name="createAccount"
+            name="createAgent"
           >
-            Create Account
+            Create Agent
           </button>
         </div>
       </div>

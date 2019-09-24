@@ -1,18 +1,11 @@
 import React, { Component, useState, useEffect } from 'react'
 import Joi from 'joi-browser'
 import Form from '../common/form'
-import {
-  getBranches,
-  getAvailableBranches,
-  getManager
-} from '../../services/userService'
+import { getBranches, getManager } from '../../services/userService'
 import { toast } from 'react-toastify'
-import { cap } from '../../services/utilsService'
 import withAuth from './../hoc/withAuth'
-import withWorkPosition from './../hoc/withWorkPosition'
-import Spinner from './../common/spinner'
 
-const SignUp = ({ auth, isForManager, ...props }) => {
+const SignUp = ({ auth, ...props }) => {
   const [user, setUser] = useState({
     username: '',
     email: '',
@@ -22,7 +15,9 @@ const SignUp = ({ auth, isForManager, ...props }) => {
     lastname: '',
     codeNo: '',
     manager: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    position: '',
+    branch: ''
   })
   const agents = [
     {
@@ -40,17 +35,15 @@ const SignUp = ({ auth, isForManager, ...props }) => {
   const [branches, setBranches] = useState([])
   const [hasBranches, setHasBranches] = useState(false)
 
-  const fetchBranches = (isForManager, setBranches) => {
-    const url = isForManager ? '/api/branches/available' : '/api/branches/taken'
-    getBranches(url).then(branches => {
+  const fetchBranches = setBranches => {
+    getBranches('/api/branches/taken').then(branches => {
       setBranches(branches)
       setHasBranches(branches.length > 0)
-      console.log(branches.length > 0)
     })
   }
 
   useEffect(() => {
-    fetchBranches(isForManager, setBranches)
+    fetchBranches(setBranches)
   }, [])
 
   const [selectedPosition, setSelectedPosition] = useState(null)
@@ -84,7 +77,15 @@ const SignUp = ({ auth, isForManager, ...props }) => {
     lastname: Joi.string()
       .required()
       .label('Lastname'),
-    codeNo: Joi.optional(),
+    position: Joi.string()
+      .required()
+      .label('Position'),
+    branch: Joi.string()
+      .required()
+      .label('Branch'),
+    codeNo: Joi.number()
+      .required()
+      .label('Code Number'),
     manager: Joi.optional()
   }
 
@@ -95,11 +96,12 @@ const SignUp = ({ auth, isForManager, ...props }) => {
     setSelectedBranch(selectedBranch)
     setUser({ ...user, manager: '' })
 
-    if (isForManager) return
+    if (!selectedBranch) return
 
+    // branch needs to populate after fetching manager
     getManager(selectedBranch.id)
       .then(fullname => {
-        setUser({ ...user, manager: fullname })
+        setUser({ ...user, manager: fullname, branch: selectedBranch.value })
       })
       .catch(({ response }) => {
         if (response && response.status === 404) {
@@ -145,14 +147,13 @@ const SignUp = ({ auth, isForManager, ...props }) => {
     const user = {
       username,
       password,
-      position: selectedPosition ? selectedPosition.value : 'manager',
+      position: selectedPosition ? selectedPosition.value : '',
       profile: {
         firstname,
         middlename,
         lastname,
         email,
         codeNo,
-        manager,
         branch: { manager },
         branch_id: selectedBranch ? selectedBranch.id : 0
       }
@@ -160,7 +161,7 @@ const SignUp = ({ auth, isForManager, ...props }) => {
 
     try {
       await auth.signUp(user)
-      toast.success('Registered!')
+
       toast.success('Please wait for verification!')
 
       setUser({
@@ -172,15 +173,18 @@ const SignUp = ({ auth, isForManager, ...props }) => {
         lastname: '',
         codeNo: '',
         manager: '',
+        branch: '',
+        position: '',
         confirmPassword: ''
       })
 
       setSelectedPosition(null)
       setSelectedBranch(null)
 
-      fetchBranches(isForManager, setBranches)
+      fetchBranches(setBranches)
 
       setErrors(_errors)
+      props.history.replace('/login')
     } catch ({ response }) {
       if (response && (response.status === 400 || response.status === 401)) {
         toast.error(response.data.status.errors)
@@ -204,22 +208,20 @@ const SignUp = ({ auth, isForManager, ...props }) => {
 
                 <div className="col-4 pl-3 pr-2 pt-3">
                   <div className="col-12  d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-4 border-bottom">
-                    <h1 className="h2">
-                      Sign Up - {isForManager ? 'Manager' : 'Agent'}
-                    </h1>
+                    <h1 className="h2">Sign Up Agent</h1>
                   </div>
 
                   {renderInput('firstname', 'Firstname')}
                   {renderInput('middlename', 'Middlename')}
                   {renderInput('lastname', 'Lastname')}
-                  {!isForManager &&
-                    renderSelect(
-                      'position',
-                      'Position',
-                      selectedPosition,
-                      handleChangePosition,
-                      agents
-                    )}
+
+                  {renderSelect(
+                    'position',
+                    'Position',
+                    selectedPosition,
+                    handleChangePosition,
+                    agents
+                  )}
                   {renderInput('codeNo', 'Code Number')}
                   {!hasBranches && <label>No Available Branch</label>}
                   {hasBranches &&
@@ -230,10 +232,9 @@ const SignUp = ({ auth, isForManager, ...props }) => {
                       handleChangeBranch,
                       branches
                     )}
-                  {!isForManager &&
-                    renderInput('manager', 'Manager', 'manager', '', {
-                      disabled: true
-                    })}
+                  {renderInput('manager', 'Manager', 'manager', '', {
+                    disabled: true
+                  })}
                 </div>
                 <div className="col-4 pl-2 pr-3 pt-5 mt-5">
                   {renderInput('username', 'Username', 'text', 'fa-user', {
@@ -247,7 +248,7 @@ const SignUp = ({ auth, isForManager, ...props }) => {
                     'password',
                     'fa-key'
                   )}
-                  {renderButton('Sign Up', null, 'Signing in...', true)}
+                  {renderButton('Sign Up', null, 'Signing up...', true)}
                   <button
                     onClick={e => {
                       e.preventDefault()
@@ -259,8 +260,7 @@ const SignUp = ({ auth, isForManager, ...props }) => {
                     Back
                   </button>
                   <p className="text-primary p-2 ">
-                    *Note: Account needs to verify by admin or manager to
-                    activate
+                    *Note: Account needs to verify by manager to activate
                   </p>
                 </div>
               </div>
@@ -286,4 +286,4 @@ const SignUp = ({ auth, isForManager, ...props }) => {
   )
 }
 
-export default withWorkPosition(withAuth(SignUp))
+export default withAuth(SignUp)

@@ -12,7 +12,8 @@ import {
   SET_START,
   SET_END,
   SET_NOT_FOUND,
-  SET_STATUS_COUNT
+  SET_STATUS,
+  SET_UNVERIFY
 } from './types'
 
 const reducer = (state, action) => {
@@ -36,8 +37,10 @@ const reducer = (state, action) => {
       return { ...state, title: payload }
     case SET_NOT_FOUND:
       return { ...state, notFound: payload }
-    case SET_STATUS_COUNT:
-      return { ...state, statusCount: payload }
+    case SET_STATUS:
+      return { ...state, status: payload }
+    case SET_UNVERIFY:
+      return { ...state, unverify: payload }
     default:
       return state
   }
@@ -52,8 +55,9 @@ const usePagination = ({
 }) => {
   const initialState = {
     items: [],
-    statusCount: {},
     pageNum: 1,
+    status: null,
+    unverify: 0,
     pages: 0,
     total: 0,
     take,
@@ -62,18 +66,18 @@ const usePagination = ({
     end: pagination.pageNumbers,
     notFound: false
   }
-  const [{ toggle, title, pageNum, ...rest }, dispatch] = useReducer(
+  const [{ toggle, title, status, pageNum, ...rest }, dispatch] = useReducer(
     reducer,
     initialState
   )
 
   useEffect(() => {
-    request(pageNum, take, title)
+    request(pageNum, take, title, status)
       .then(response => {
         dispatch({ type: SET_ITEMS, payload: response[data] })
         dispatch({ type: SET_PAGES, payload: response[pages] })
         dispatch({ type: SET_TOTAL, payload: response[total] })
-        dispatch({ type: SET_STATUS_COUNT, payload: response['statusCount'] })
+        dispatch({ type: SET_UNVERIFY, payload: response['unverify'] })
         dispatch({ type: SET_NOT_FOUND, payload: false })
       })
       .catch(({ response }) => {
@@ -84,14 +88,14 @@ const usePagination = ({
           dispatch({ type: SET_NOT_FOUND, payload: true })
         }
       })
-  }, [toggle, title, pageNum])
+  }, [toggle, title, pageNum, status])
 
   useEffect(() => {
     dispatch({ type: SET_ITEMS, payload: [] })
   }, [title, pageNum])
 
   return {
-    state: { toggle, pageNum, take, ...rest },
+    state: { toggle, status, pageNum, take, ...rest },
     dispatch
   }
 }

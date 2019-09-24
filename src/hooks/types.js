@@ -8,4 +8,6 @@ export const SET_END = 'SET_END'
 export const SEARCH_ITEMS = 'SEARCH_ITEMS'
 export const DELETE_ITEM = 'DELETE_ITEM'
 export const SET_NOT_FOUND = 'SET_NOT_FOUND'
-export const SET_STATUS_COUNT = 'SET_STATUS_COUNT'
+
+export const SET_STATUS = 'SET_STATUS'
+export const SET_UNVERIFY = 'SET_UNVERIFY'

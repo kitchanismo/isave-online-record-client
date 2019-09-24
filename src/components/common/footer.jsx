@@ -8,6 +8,7 @@ const Footer = () => {
         .footer {
           background-color: #343a40;
           border-radius: 0 0 7px 7px;
+          height: 60px !important;
         }
       `}</style>
     </div>

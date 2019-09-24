@@ -1,6 +1,6 @@
 {
-  "apiUrl": "http://127.0.0.1:3333",
-  "appUrl": "http://127.0.0.1:3000",
+  "apiUrl": "https://isave-online-record.herokuapp.com",
+  "appUrl": "https://isave.netlify.com",
   "pagination": {
     "perPage": 10,
     "pageNumbers": 3

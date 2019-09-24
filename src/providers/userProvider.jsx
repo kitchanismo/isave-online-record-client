@@ -1,5 +1,7 @@
-import React, { memo } from 'react'
+import React, { memo, useEffect } from 'react'
 import usePagination from '../hooks/usePagination'
+import useUnverify from '../hooks/useUnverify'
+
 import { UserContext } from '../context'
 import { pagination } from '../config.json'
 import { sortBy } from '../services/utilsService'
@@ -10,7 +12,8 @@ import {
   SET_PAGENUM,
   SEARCH_ITEMS,
   SET_START,
-  SET_END
+  SET_END,
+  SET_STATUS
 } from '../hooks/types'
 
 const UserProvider = props => {
@@ -21,6 +24,10 @@ const UserProvider = props => {
 
   const handleRefresh = () => {
     dispatch({ type: SET_REFRESH, payload: toggle => !toggle })
+  }
+
+  const handleSetStatus = status => {
+    dispatch({ type: SET_STATUS, payload: status })
   }
 
   const handlePageChange = pageNum => {
@@ -34,7 +41,7 @@ const UserProvider = props => {
       const _users = originalUsers.filter(a => a.id !== user.id)
 
       dispatch({ type: SET_ITEMS, payload: _users })
-      console.log('hit3', user.id)
+
       await deleteUser(user.id)
       return _users.length > 0
     } catch (error) {
@@ -69,7 +76,8 @@ const UserProvider = props => {
         onSort: handleSort,
         onSearch: handleSearch,
         onSetStart: handleSetStart,
-        onSetEnd: handleSetEnd
+        onSetEnd: handleSetEnd,
+        onSetStatus: handleSetStatus
       }}
     >
       {props.children}

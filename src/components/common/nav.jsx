@@ -1,8 +1,7 @@
 import React from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import auth from '../../services/authService'
 import { cap } from '../../services/utilsService'
-
 import { theme } from '../../config.json'
 
 const Nav = props => {
@@ -14,10 +13,10 @@ const Nav = props => {
     <React.Fragment>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
-          <h5 className="text-white mt-1">
-            _<span style={{ color: theme.secondary }}>i</span>
-            SAVE_: Online Record Management System
-          </h5>
+          <h6 className="text-white mt-1">
+            <span style={{ color: theme.secondary }}>COCOLIFE </span>: Hybrid
+            Management Information System with SMS Notification
+          </h6>
           <button
             className="navbar-toggler"
             type="button"
@@ -36,10 +35,7 @@ const Nav = props => {
             <ul className="navbar-nav">
               {auth.isValidUser() && (
                 <React.Fragment>
-                  <i className="fa fa-key text-success mr-3"></i>
-                  <i className="fa fa-exclamation-triangle text-danger mr-3"></i>
-                  <i className="fa fa-user text-warning" />
-                  <li className="nav-item">
+                  <li className="nav-item ml-1">
                     <NavLink className="nav-link active" to="/home">
                       {cap(auth.getCurrentUser().username) +
                         ' | ' +
@@ -58,15 +54,6 @@ const Nav = props => {
                 </React.Fragment>
               )}
             </ul>
-            <div className="dropdown-menu">
-              <h6 className="dropdown-header">Dropdown header</h6>
-              <a className="dropdown-item" href="#">
-                Action
-              </a>
-              <a className="dropdown-item" href="#">
-                Another action
-              </a>
-            </div>
           </div>
         </div>
         <style jsx="">{`
@@ -75,6 +62,10 @@ const Nav = props => {
           }
           .fa {
             margin-top: 12px !important;
+          }
+
+          i {
+            cursor: pointer;
           }
         `}</style>
       </nav>

@@ -12,7 +12,7 @@ const CustomModal = ({
   ...rest
 }) => {
   return (
-    <Modal isOpen={modal} toggle={toggle} className={className} {...rest}>
+    <Modal isOpen={modal} toggle={toggle} className={`${className}`} {...rest}>
       <ModalHeader toggle={toggle}>{title}</ModalHeader>
       <ModalBody>{label}</ModalBody>
       <ModalFooter>

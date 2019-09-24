@@ -9,16 +9,19 @@ import { pagination } from '../../../config.json'
 import { Link } from 'react-router-dom'
 import Spinner from '../../common/spinner'
 
-const Users = props => {
+import withAuth from './../../hoc/withAuth'
+
+const Users = ({ auth, ...props }) => {
   const {
-    state: { total, users, pageNum, start, end, notFound, statusCount },
+    state: { users, pageNum, start, end, notFound },
     onDelete,
     onRefresh,
     onPageChange,
     onSort,
     onSearch,
     onSetStart,
-    onSetEnd
+    onSetEnd,
+    onSetStatus
   } = useContext(UserContext)
 
   const [selectedUser, setSelectedUser] = useState({})
@@ -35,7 +38,7 @@ const Users = props => {
       label: 'Username'
     },
     {
-      path: 'lastname',
+      path: 'profile.lastname',
       key: 'fullname',
       label: 'Fullname',
       content: user =>
@@ -122,9 +125,9 @@ const Users = props => {
   const toggleDelete = async ({ target }) => {
     setModalDelete(modalDelete => !modalDelete)
     if (target && target.name === 'primary') {
-      console.log(selectedUser)
       await doDelete(selectedUser)
       setSelectedUser({})
+
       onRefresh()
     }
   }
@@ -132,7 +135,7 @@ const Users = props => {
   const renderModal = () => {
     return (
       <CustomModal
-        title="iSave"
+        title="Cocolife"
         modal={modal}
         toggle={toggle}
         label={`Activate ${selectedUser.username}?`}
@@ -144,7 +147,7 @@ const Users = props => {
   const renderModalDelete = () => {
     return (
       <CustomModal
-        title="iSave"
+        title="Cocolife"
         modal={modalDelete}
         toggle={toggleDelete}
         label={`Archive ${selectedUser.username}?`}
@@ -172,7 +175,9 @@ const Users = props => {
 
   const handleSearch = async ({ e, search }) => {
     e.preventDefault()
-    // if (!search) return
+    // if (!search)
+    props.history.replace('/users')
+    onSetStatus(null)
     onSetStart(1)
     onSetEnd(pagination.pageNumbers)
     onPageChange(1)
@@ -189,18 +194,15 @@ const Users = props => {
       >
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
           <h1 className="h2">Users Management</h1>
-          {/* <span className="h6">
-            Total:
-            <span className="h6 text-secondary">{total}</span>
-          </span>
-          <span className="h6">
-            Active:
-            <span className="h6 text-secondary">{statusCount.active}</span>
-          </span>
-          <span className="h6 ">
-            Unverify:
-            <span className="h6 text-secondary">{statusCount.unverify}</span>
-          </span> */}
+          {auth.isAdmin() && (
+            <button
+              onClick={() => props.history.replace('/users/new')}
+              className="btn btn-sm btn-outline-success ml-1"
+            >
+              <span className="fa fa-plus mr-1"></span>
+              MANAGER
+            </button>
+          )}
         </div>
 
         <div className="col-12">
@@ -215,9 +217,9 @@ const Users = props => {
             onSort={handleSort}
           />
           {users.length === 0 && !notFound && (
-            <Spinner className="mt-5 pt-5 mb-5" />
+            <Spinner className="spinner mt-5 pt-5 mb-5" />
           )}
-          {notFound && <h6>No records found!</h6>}
+          {notFound && <h6 className="mt-2 mb-5">No records found!</h6>}
           {users.length > 0 && <Paginate />}
         </div>
 
@@ -232,10 +234,16 @@ const Users = props => {
             cursor: pointer;
             margin-right: 2px !important;
           }
+          .spinner {
+            margin-bottom: 200px !important;
+          }
+          .fa-plus {
+            margin-top: 0 !important;
+          }
         `}</style>
       </main>
     </React.Fragment>
   )
 }
 
-export default Users
+export default withAuth(Users)

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import { UserContext } from '../../context'
 import { createArray } from '../../services/utilsService'
-import { pagination } from '../../config.json'
+import { pagination, theme } from '../../config.json'
 
 const Paginate = props => {
   const { pageNumbers: PAGE_NUMBERS } = pagination
@@ -170,6 +170,19 @@ const Paginate = props => {
             }
             .page-of {
               margin-top: 10px;
+            }
+            .page-item.active .page-link {
+              z-index: 1;
+              color: #fff;
+              background-color: ${theme.secondary};
+              border-color: ${theme.secondary};
+            }
+
+            .page-link {
+              color: ${theme.secondary};
+            }
+            .page-link:hover {
+              color: ${theme.secondary};
             }
           `}
         </style>

@@ -1,13 +1,21 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Joi from 'joi-browser'
-import { getBranches, getManager, getUser } from '../../../services/userService'
+import {
+  getBranches,
+  getManager,
+  getUser,
+  editUser
+} from '../../../services/userService'
 import { toast } from 'react-toastify'
 import { cap } from '../../../services/utilsService'
 import withAuth from '../../hoc/withAuth'
 import Form from './../../common/form'
 import Spinner from './../../common/spinner'
 
+import { UserContext } from './../../../context'
+
 const EditUser = ({ auth, ...props }) => {
+  const { onRefresh } = useContext(UserContext)
   const { id } = props.match.params
   const [user, setUser] = useState({
     username: '',
@@ -16,48 +24,58 @@ const EditUser = ({ auth, ...props }) => {
     middlename: '',
     lastname: '',
     manager: '',
-    codeNo: ''
+    codeNo: '',
+    position: '',
+    branch: ''
   })
 
   useEffect(() => {
-    getUser(id).then(({ profile, username, position }) => {
-      setUser({
-        username,
-        email: profile.email,
-        firstname: profile.firstname,
-        middlename: profile.middlename,
-        lastname: profile.lastname,
-        codeNo: profile.codeNo,
-        manager: profile.branch.manager
-      })
-      setSelectedPosition({
-        id: position === 'sales officer' ? 1 : 2,
-        value: position,
-        label: cap(position)
-      })
-      setSelectedBranch({
-        id: profile.branch_id,
-        value: profile.branch.name,
-        label: cap(profile.branch.name)
-      })
+    getUser(id)
+      .then(({ profile, username, position }) => {
+        setUser({
+          username,
+          email: profile.email,
+          firstname: profile.firstname,
+          middlename: profile.middlename,
+          lastname: profile.lastname,
+          codeNo: profile.codeNo,
+          manager: profile.branch.manager,
+          branch: profile.branch.name,
+          position
+        })
+        setSelectedPosition({
+          id: position === 'sales' ? 1 : 2,
+          value: position,
+          label: cap(position + (position !== 'manager' ? ' officer' : ''))
+        })
+        setSelectedBranch({
+          id: profile.branch_id,
+          value: profile.branch.name,
+          label: cap(profile.branch.name)
+        })
 
-      getBranches('/api/branches').then(branches => {
-        setBranches(branches)
+        const url =
+          position === 'manager'
+            ? '/api/branches/available'
+            : '/api/branches/taken'
+
+        getBranches(url).then(branches => {
+          setBranches(branches)
+        })
       })
-    })
-    //.catch(() => props.history.replace('/not-found'))
+      .catch(() => props.history.replace('/not-found'))
   }, [])
 
   const agents = [
     {
       id: 1,
       label: 'Sales Officer',
-      value: 'sales officer'
+      value: 'sales'
     },
     {
       id: 2,
       label: 'Promo Officer',
-      value: 'promo officer'
+      value: 'promo'
     }
   ]
 
@@ -85,8 +103,16 @@ const EditUser = ({ auth, ...props }) => {
     lastname: Joi.string()
       .required()
       .label('Lastname'),
+    position: Joi.string()
+      .required()
+      .label('Position'),
+    branch: Joi.string()
+      .required()
+      .label('Branch'),
     manager: Joi.optional(),
-    codeNo: Joi.optional()
+    codeNo: Joi.number()
+      .required()
+      .label('Code Number')
   }
 
   const handleChangePosition = selectedPosition =>
@@ -94,17 +120,76 @@ const EditUser = ({ auth, ...props }) => {
 
   const handleChangeBranch = selectedBranch => {
     setSelectedBranch(selectedBranch)
+
+    if (!isAgent() || !selectedBranch) return
+
     getManager(selectedBranch.id).then(username => {
-      setUser({ ...user, manager: username })
+      setUser({ ...user, manager: username, branch: selectedBranch.value })
     })
   }
 
-  const handleSubmit = async (e, user) => alert('Under construction!')
+  const handleSubmit = async (
+    e,
+    {
+      username,
+      email,
+      password,
+      firstname,
+      middlename,
+      lastname,
+      position,
+      codeNo
+    }
+  ) => {
+    const user = {
+      username,
+      password,
+      position,
+      profile: {
+        firstname,
+        middlename,
+        lastname,
+        email,
+        codeNo,
+        branch_id: selectedBranch ? selectedBranch.id : null
+      }
+    }
+
+    try {
+      await editUser(id, user)
+      // console.log(user)
+      toast.success('Updated!')
+
+      // setUser({
+      //   username: '',
+      //   email: '',
+      //   password: '',
+      //   firstname: '',
+      //   middlename: '',
+      //   lastname: '',
+      //   codeNo: '',
+      //   confirmPassword: ''
+      // })
+
+      // setSelectedBranch(null)
+      // setSelectedPosition(null)
+
+      //fetchBranches(setBranches)
+
+      setErrors(errors)
+
+      onRefresh()
+
+      props.history.replace('/users')
+    } catch ({ response }) {
+      if (response && response.status === 400) {
+        toast.error(response.data.status.errors[0].message)
+      }
+    }
+  }
 
   const isAgent = () => {
-    return (
-      selectedPosition.value !== 'manager' && selectedPosition.value !== 'admin'
-    )
+    return user.position !== 'manager' && user.position !== 'admin'
   }
 
   return (
@@ -171,13 +256,12 @@ const EditUser = ({ auth, ...props }) => {
 
         <style jsx="">{`
           .dashboard {
-            border-radius: 0px 7px 0 0;
+            border-radius: 0px 5px 0 0;
           }
           .col-4 {
             padding: 0;
           }
           .row {
-            background-color: white;
             border-radius: 5px;
           }
           .side-content {

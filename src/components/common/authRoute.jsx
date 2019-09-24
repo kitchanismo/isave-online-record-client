@@ -4,6 +4,7 @@ import withAuth from '../hoc/withAuth'
 
 const AuthRoute = ({
   isAdminOrManager = false,
+  isAdmin = false,
   auth,
   path,
   component: Component,
@@ -23,8 +24,11 @@ const AuthRoute = ({
               }}
             />
           )
-        console.log(isAdminOrManager)
+
         if (isAdminOrManager && !auth.isAdminOrManager()) {
+          return <Redirect to="/not-found" />
+        }
+        if (isAdmin && !auth.isAdmin()) {
           return <Redirect to="/not-found" />
         }
         return Component ? <Component {...props} /> : render(props)

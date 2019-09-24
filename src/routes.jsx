@@ -9,10 +9,17 @@ import NotFound from './components/common/notFound'
 import AuthRoute from './components/common/authRoute'
 import GuestRoute from './components/common/guestRoute'
 
-const Routes = () => {
+const Routes = props => {
   return (
     <Switch>
-      {/* <AuthRoute path="/home" component={Home} /> */}
+      <AuthRoute
+        path="/dashboard/new-fs"
+        render={props => <Home {...props} menu="dashboard" sub="newFs" />}
+      />
+      <AuthRoute
+        path="/dashboard/new-gpa"
+        render={props => <Home {...props} menu="dashboard" sub="newGPA" />}
+      />
       <AuthRoute
         path="/dashboard"
         render={props => <Home {...props} menu="dashboard" />}
@@ -24,6 +31,11 @@ const Routes = () => {
       <AuthRoute
         path="/agents"
         render={props => <Home {...props} menu="agents" />}
+      />
+      <AuthRoute
+        isAdmin
+        path="/users/new"
+        render={props => <Home {...props} menu="users" sub="newUser" />}
       />
       <AuthRoute
         isAdminOrManager
@@ -44,7 +56,7 @@ const Routes = () => {
         path="/reports"
         render={props => <Home {...props} menu="reports" />}
       />
-      <GuestRoute path="/login" component={Login} />
+      <GuestRoute path="/login" render={props => <Login {...props}></Login>} />
       <GuestRoute path="/sign-up" component={SignUp} />
       <Route path="/not-found" component={NotFound} />>
       <Redirect from="/" exact to="/dashboard" />

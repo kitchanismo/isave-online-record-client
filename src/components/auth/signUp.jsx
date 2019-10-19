@@ -4,6 +4,7 @@ import Form from '../common/form'
 import { getBranches, getManager } from '../../services/userService'
 import { toast } from 'react-toastify'
 import withAuth from './../hoc/withAuth'
+import { joiLettersOnly } from '../../services/utilsService'
 
 const SignUp = ({ auth, ...props }) => {
   const [user, setUser] = useState({
@@ -51,6 +52,8 @@ const SignUp = ({ auth, ...props }) => {
 
   const [errors, setErrors] = useState({})
 
+
+
   const schema = {
     username: Joi.string()
       .required()
@@ -68,15 +71,9 @@ const SignUp = ({ auth, ...props }) => {
       .valid(Joi.ref('password'))
       .options({ language: { any: { allowOnly: 'not match' } } })
       .label('Password'),
-    firstname: Joi.string()
-      .required()
-      .label('Firstname'),
-    middlename: Joi.string()
-      .required()
-      .label('Middlename'),
-    lastname: Joi.string()
-      .required()
-      .label('Lastname'),
+    firstname: joiLettersOnly('Firstname'),
+    middlename: joiLettersOnly('Middlename'),
+    lastname: joiLettersOnly('Lastname'),
     position: Joi.string()
       .required()
       .label('Position'),
@@ -85,6 +82,7 @@ const SignUp = ({ auth, ...props }) => {
       .label('Branch'),
     codeNo: Joi.number()
       .required()
+      .min(8)
       .label('Code Number'),
     manager: Joi.optional()
   }

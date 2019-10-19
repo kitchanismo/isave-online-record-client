@@ -1,8 +1,8 @@
 import React, { useEffect, memo } from 'react'
-import SideMenu from './common/sideMenu'
+import SideMenu from './sideMenu'
 import Dashboard from './menus/dashboard/index'
-import AddFS from './menus/dashboard/addFs'
-import AddGPA from './menus/dashboard/addgpa'
+import AddFS from './menus/client/addFs'
+import AddGPA from './menus/client/addgpa'
 import Branch from './menus/branch/index'
 import { toast } from 'react-toastify'
 import Users from './menus/users/index'
@@ -13,6 +13,9 @@ import ClientProvider from '../providers/clientProvider'
 import ViewUser from './menus/users/view'
 import EditUser from './menus/users/edit'
 import NewUser from './menus/users/new'
+import EditBranch from './menus/branch/edit'
+import NewBranch from './menus/branch/new'
+import EditClient from './menus/client/edit'
 
 const Home = ({ menu, sub, ...props }) => {
   return (
@@ -25,23 +28,36 @@ const Home = ({ menu, sub, ...props }) => {
               style={{ backgroundColor: 'transparent', minHeight: '800px' }}
             >
               <SideMenu>
-                {menu === 'dashboard' && (
-                  <React.Fragment>
-                    {sub === 'newFs' && <AddFS {...props} />}
-                    {sub === 'newGPA' && <AddGPA {...props} />}
-                    {!sub && <Dashboard {...props} />}
-                  </React.Fragment>
-                )}
-                {menu === 'branches' && <Branch {...props} />}
-                {menu === 'users' && (
-                  <React.Fragment>
-                    {sub === 'viewUser' && <ViewUser {...props} />}
-                    {sub === 'editUser' && <EditUser {...props} />}
-                    {sub === 'newUser' && <NewUser {...props} />}
-                    {!sub && <Users {...props} />}
-                  </React.Fragment>
-                )}
-                {menu === 'reports' && <Reports {...props} />}
+                <main
+                  role="main"
+                  className="dashboard col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 bg-light border border-secondary"
+                >
+                  {menu === 'dashboard' && (
+                    <React.Fragment>
+                      {sub === 'newFs' && <AddFS {...props} />}
+                      {sub === 'newGPA' && <AddGPA {...props} />}
+                      {!sub && <Dashboard {...props} />}
+                    </React.Fragment>
+                  )}
+                  {menu === 'branches' && (
+                    <React.Fragment>
+                      {sub === 'editBranch' && <EditBranch {...props} />}
+                      {sub === 'newBranch' && <NewBranch {...props} />}
+                      {!sub && <Branch {...props} />}
+                    </React.Fragment>
+                  )}
+                  {menu === 'users' && (
+                    <React.Fragment>
+                      {sub === 'viewUser' && <ViewUser {...props} />}
+                      {sub === 'editUser' && <EditUser {...props} />}
+                      {sub === 'newUser' && <NewUser {...props} />}
+                      {!sub && <Users {...props} />}
+                    </React.Fragment>
+                  )}
+                  {menu === 'reports' && <Reports {...props} />}
+
+                  {menu === 'clients' && <EditClient {...props} />}
+                </main>
               </SideMenu>
 
               <Footer></Footer>
@@ -49,6 +65,11 @@ const Home = ({ menu, sub, ...props }) => {
           </div>
         </ClientProvider>
       </UserProvider>
+      <style jsx="">{`
+        .dashboard {
+          border-radius: 0px 7px 0 0;
+        }
+      `}</style>
     </React.Fragment>
   )
 }

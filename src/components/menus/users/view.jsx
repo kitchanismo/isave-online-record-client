@@ -29,10 +29,7 @@ const ViewUser = props => {
   }
   return (
     <React.Fragment>
-      <main
-        role="main"
-        className="dashboard col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 bg-light border border-secondary"
-      >
+     
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
           <h1 className="h2">User Overview</h1>
         </div>
@@ -104,19 +101,19 @@ const ViewUser = props => {
                   <h5 className="card-title">Employment Details</h5>
                   <br></br>
                   <p className="card-subtitle">
-                    Position:{' '}
+                    Position:{'   '}
                     <span className="text-secondary">{cap(user.position)}</span>
                   </p>
                   <br></br>
                   <p className="card-subtitle">
-                    Branch:{' '}
+                    Branch:{'   '}
                     <span className="text-secondary">
                       {cap(user.profile.branch ? user.profile.branch.name : '')}
                     </span>
                   </p>
                   <br></br>
                   <p className="card-subtitle">
-                    Code Number:{' '}
+                    Code Number:{'   '}
                     <span className="text-secondary">
                       {cap(user.profile.codeNo)}
                     </span>
@@ -124,7 +121,7 @@ const ViewUser = props => {
                   <br></br>
                   {isAgent() && (
                     <p className="card-subtitle">
-                      Under by:{' '}
+                      Under by:{'   '}
                       <span className="text-secondary">
                         {cap(user.profile.branch.manager) + ' - manager'}
                       </span>
@@ -136,15 +133,13 @@ const ViewUser = props => {
           </div>
         </Spinner>
         <style jsx="">{`
-          .dashboard {
-            border-radius: 0px 7px 0 0;
-          }
+         
           .spinner {
             margin-top: 200px;
             margin-bottom: 200px;
           }
         `}</style>
-      </main>
+     
     </React.Fragment>
   )
 }

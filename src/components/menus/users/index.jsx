@@ -63,16 +63,15 @@ const Users = ({ auth, ...props }) => {
       path: 'status',
       key: 'status',
       label: 'Status',
-      content: ({ status, ...user }) => (
+      content: user => (
         <span
           onClick={async e => {
-            if (status === 1) return
             setSelectedUser(user)
             await toggle(e)
           }}
-          className={`badge badge-${status === 1 ? 'success' : 'danger'}`}
+          className={`badge badge-${user.status === 1 ? 'success' : 'danger'}`}
         >
-          {status === 1 ? 'active' : 'unverify'}
+          {user.status === 1 ? 'active' : 'inactive'}
         </span>
       )
     },
@@ -138,7 +137,9 @@ const Users = ({ auth, ...props }) => {
         title="Cocolife"
         modal={modal}
         toggle={toggle}
-        label={`Activate ${selectedUser.username}?`}
+        label={`${selectedUser.status === 0 ? 'Activate' : 'Deactivate'} ${
+          selectedUser.username
+        }?`}
         primary={{ type: 'primary', label: 'CONFIRM' }}
       />
     )
@@ -188,60 +189,53 @@ const Users = ({ auth, ...props }) => {
     <React.Fragment>
       {renderModal()}
       {renderModalDelete()}
-      <main
-        role="main"
-        className="dashboard col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 bg-light border border-secondary"
-      >
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-          <h1 className="h2">Users Management</h1>
-          {auth.isAdmin() && (
-            <button
-              onClick={() => props.history.replace('/users/new')}
-              className="btn btn-sm btn-outline-success ml-1"
-            >
-              <span className="fa fa-plus mr-1"></span>
-              MANAGER
-            </button>
-          )}
+
+      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 className="h2">Users Management</h1>
+        {auth.isAdmin() && (
+          <button
+            onClick={() => props.history.replace('/users/new')}
+            className="btn btn-sm btn-grad-secondary ml-1"
+          >
+            <span className="fa fa-plus mr-1"></span>
+            MANAGER
+          </button>
+        )}
+      </div>
+
+      <div className="col-12">
+        <div className="mb-3">
+          <SearchForm handleSearch={handleSearch} placeholder="Search here" />
         </div>
 
-        <div className="col-12">
-          <div className="mb-3">
-            <SearchForm handleSearch={handleSearch} placeholder="Search here" />
-          </div>
+        <Table
+          columns={columns}
+          data={users}
+          sortColumn={sortColumn}
+          onSort={handleSort}
+        />
+        {users.length === 0 && !notFound && (
+          <Spinner className="spinner mt-5 pt-5 mb-5" />
+        )}
+        {notFound && <h6 className="mt-2 mb-5">No records found!</h6>}
+        {users.length > 0 && <Paginate />}
+      </div>
 
-          <Table
-            columns={columns}
-            data={users}
-            sortColumn={sortColumn}
-            onSort={handleSort}
-          />
-          {users.length === 0 && !notFound && (
-            <Spinner className="spinner mt-5 pt-5 mb-5" />
-          )}
-          {notFound && <h6 className="mt-2 mb-5">No records found!</h6>}
-          {users.length > 0 && <Paginate />}
-        </div>
-
-        <style jsx="">{`
-          .dashboard {
-            border-radius: 0px 7px 0 0;
-          }
-          .col-4 {
-            padding: 0;
-          }
-          .badge {
-            cursor: pointer;
-            margin-right: 2px !important;
-          }
-          .spinner {
-            margin-bottom: 200px !important;
-          }
-          .fa-plus {
-            margin-top: 0 !important;
-          }
-        `}</style>
-      </main>
+      <style jsx="">{`
+        .col-4 {
+          padding: 0;
+        }
+        .badge {
+          cursor: pointer;
+          margin-right: 2px !important;
+        }
+        .spinner {
+          margin-bottom: 200px !important;
+        }
+        .fa-plus {
+          margin-top: 0 !important;
+        }
+      `}</style>
     </React.Fragment>
   )
 }

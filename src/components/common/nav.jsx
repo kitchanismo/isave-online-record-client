@@ -5,8 +5,8 @@ import { cap } from '../../services/utilsService'
 import { theme } from '../../config.json'
 
 const Nav = props => {
-  const handleLogout = async () => {
-    await auth.logout()
+  const handleLogout = () => {
+    auth.logout()
   }
 
   return (
@@ -17,17 +17,7 @@ const Nav = props => {
             <span style={{ color: theme.secondary }}>COCOLIFE </span>: Hybrid
             Management Information System with SMS Notification
           </h6>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon" />
-          </button>
+
           <div
             className="collapse navbar-collapse d-flex justify-content-end"
             id="navbarNav"
@@ -36,7 +26,10 @@ const Nav = props => {
               {auth.isValidUser() && (
                 <React.Fragment>
                   <li className="nav-item ml-1">
-                    <NavLink className="nav-link active" to="/home">
+                    <NavLink
+                      className="nav-link active"
+                      to={`/users/${auth.getCurrentUser().id}`}
+                    >
                       {cap(auth.getCurrentUser().username) +
                         ' | ' +
                         cap(auth.getCurrentUser().position)}
@@ -44,8 +37,8 @@ const Nav = props => {
                   </li>
                   <li className="nav-item">
                     <a
-                      className="nav-link"
                       href="/login"
+                      className="nav-link"
                       onClick={handleLogout}
                     >
                       Logout

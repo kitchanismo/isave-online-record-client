@@ -37,7 +37,7 @@ function throwError(error) {
     error.response.data.status &&
     error.response.data.status.name === 'ExpiredJwtToken'
   ) {
-    toast.error('jwt is expired')
+    toast.error('Please Logout!')
     return Promise.reject(error)
   }
 
@@ -47,6 +47,7 @@ function throwError(error) {
     error.response.status < 500
   if (!expectedError) {
     toast.error('An unexpected error occurrred.')
+    console.log(error)
   }
 
   return Promise.reject(error)

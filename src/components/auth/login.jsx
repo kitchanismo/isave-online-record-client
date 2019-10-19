@@ -23,15 +23,16 @@ const Login = ({ auth, ...props }) => {
   }
 
   const handleSubmit = async (e, data) => {
-    try {
-      await auth.login(data)
-      props.history.replace('/')
-      onRefresh()
-    } catch ({ response }) {
-      if (response && response.status === 401) {
-        toast.error(response.data.status.errors)
-      }
-    }
+    auth
+      .login(data)
+      .then(() => {
+        props.history.replace('/')
+      })
+      .catch(({ response }) => {
+        if (response && response.status === 401) {
+          toast.error(response.data.status.errors)
+        }
+      })
   }
 
   const navigateSignUp = () => {

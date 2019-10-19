@@ -7,7 +7,7 @@ import {
   editUser
 } from '../../../services/userService'
 import { toast } from 'react-toastify'
-import { cap } from '../../../services/utilsService'
+import { cap, joiLettersOnly } from '../../../services/utilsService'
 import withAuth from '../../hoc/withAuth'
 import Form from './../../common/form'
 import Spinner from './../../common/spinner'
@@ -28,42 +28,44 @@ const EditUser = ({ auth, ...props }) => {
     position: '',
     branch: ''
   })
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
-    getUser(id)
-      .then(({ profile, username, position }) => {
-        setUser({
-          username,
-          email: profile.email,
-          firstname: profile.firstname,
-          middlename: profile.middlename,
-          lastname: profile.lastname,
-          codeNo: profile.codeNo,
-          manager: profile.branch.manager,
-          branch: profile.branch.name,
-          position
-        })
-        setSelectedPosition({
-          id: position === 'sales' ? 1 : 2,
-          value: position,
-          label: cap(position + (position !== 'manager' ? ' officer' : ''))
-        })
-        setSelectedBranch({
-          id: profile.branch_id,
-          value: profile.branch.name,
-          label: cap(profile.branch.name)
-        })
-
-        const url =
-          position === 'manager'
-            ? '/api/branches/available'
-            : '/api/branches/taken'
-
-        getBranches(url).then(branches => {
-          setBranches(branches)
-        })
+    setIsLoaded(false)
+    getUser(id).then(({ profile, username, position }) => {
+      setUser({
+        username,
+        email: profile.email,
+        firstname: profile.firstname,
+        middlename: profile.middlename,
+        lastname: profile.lastname,
+        codeNo: profile.codeNo,
+        manager: profile.branch ? profile.branch.manager : '',
+        branch: profile.branch ? profile.branch.name : '',
+        position
       })
-      .catch(() => props.history.replace('/not-found'))
+      setSelectedPosition({
+        id: position === 'sales' ? 1 : 2,
+        value: position,
+        label: cap(position + (position !== 'manager' ? ' officer' : ''))
+      })
+      setSelectedBranch({
+        id: profile.branch_id,
+        value: profile.branch ? profile.branch.name : '',
+        label: cap(profile.branch ? profile.branch.name : '')
+      })
+
+      const url =
+        position === 'manager'
+          ? '/api/branches/available'
+          : '/api/branches/taken'
+
+      getBranches(url).then(branches => {
+        setBranches(branches)
+        setIsLoaded(true)
+      })
+    })
+    // .catch(() => props.history.replace('/not-found'))
   }, [])
 
   const agents = [
@@ -94,15 +96,9 @@ const EditUser = ({ auth, ...props }) => {
     email: Joi.string()
       .required()
       .label('Email'),
-    firstname: Joi.string()
-      .required()
-      .label('Firstname'),
-    middlename: Joi.string()
-      .required()
-      .label('Middlename'),
-    lastname: Joi.string()
-      .required()
-      .label('Lastname'),
+    firstname: joiLettersOnly('Firstname'),
+    middlename: joiLettersOnly('Middlename'),
+    lastname: joiLettersOnly('Lastname'),
     position: Joi.string()
       .required()
       .label('Position'),
@@ -112,6 +108,7 @@ const EditUser = ({ auth, ...props }) => {
     manager: Joi.optional(),
     codeNo: Joi.number()
       .required()
+      .min(8)
       .label('Code Number')
   }
 
@@ -194,86 +191,87 @@ const EditUser = ({ auth, ...props }) => {
 
   return (
     <React.Fragment>
-      <main
-        role="main"
-        className="dashboard col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 bg-light border border-secondary"
-      >
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-          <h1 className="h2">Edit User</h1>
-        </div>
+      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 className="h2">Edit User</h1>
+      </div>
 
-        <Spinner isLoaded={user.username !== ''} className="spinner">
-          <Form
-            data={{ data: user, setData: setUser }}
-            errors={{ errors, setErrors }}
-            onSubmit={handleSubmit}
-            schema={schema}
-          >
-            {({ renderInput, renderSelect, renderButton }) => {
-              return (
-                <React.Fragment>
-                  <div className="row m-1">
-                    <div className="col-6 pl-5 pr-3 pt-4">
-                      {renderInput('firstname', 'Firstname')}
-                      {renderInput('middlename', 'Middlename')}
-                      {renderInput('lastname', 'Lastname')}
-                      {renderSelect(
-                        'position',
-                        'Position',
-                        selectedPosition,
-                        handleChangePosition,
-                        agents
-                      )}
-                      {renderInput('codeNo', 'Code Number')}
-                      {renderSelect(
-                        'branch',
-                        'Branch',
-                        selectedBranch,
-                        handleChangeBranch,
-                        branches
-                      )}
+      <Spinner isLoaded={isLoaded} className="spinner">
+        <Form
+          data={{ data: user, setData: setUser }}
+          errors={{ errors, setErrors }}
+          onSubmit={handleSubmit}
+          schema={schema}
+        >
+          {({ renderInput, renderSelect, renderButton }) => {
+            return (
+              <React.Fragment>
+                <div className="row m-1">
+                  <div className="col-6 pl-5 pr-3 pt-4">
+                    {renderInput('firstname', 'Firstname')}
+                    {renderInput('middlename', 'Middlename')}
+                    {renderInput('lastname', 'Lastname')}
+                    {renderSelect(
+                      'position',
+                      'Position',
+                      selectedPosition,
+                      handleChangePosition,
+                      agents,
+                      {
+                        isDisabled: user.position === 'manager' ? true : false
+                      }
+                    )}
+                    {renderInput('codeNo', 'Code Number')}
+                    {renderSelect(
+                      'branch',
+                      'Branch',
+                      selectedBranch,
+                      handleChangeBranch,
+                      branches
+                    )}
 
-                      {isAgent() &&
-                        renderInput('manager', 'Manager', 'manager', '', {
-                          disabled: true
-                        })}
-                    </div>
-                    <div className="col-6 pl-3 pr-5 pt-4">
-                      {renderInput('username', 'Username', 'text', 'fa-user')}
-                      {renderInput('email', 'Email', 'email', 'fa-envelope')}
-                      {renderButton('Update', null, 'Updating...', true)}
-
-                      {/* <p className="text-primary p-2 ">
-                      *Note: Only admin can update the other managers account
-                    </p> */}
-                    </div>
+                    {isAgent() &&
+                      renderInput('manager', 'Manager', 'manager', '', {
+                        disabled: true
+                      })}
                   </div>
-                </React.Fragment>
-              )
-            }}
-          </Form>
-        </Spinner>
+                  <div className="col-6 pl-3 pr-5 pt-4">
+                    {renderInput('username', 'Username', 'text', 'fa-user')}
+                    {renderInput('email', 'Email', 'email', 'fa-envelope')}
+                    {renderButton('Update', null, 'Updating...', true)}
+                    <button
+                      onClick={e => {
+                        e.preventDefault()
+                        props.history.replace('/users')
+                      }}
+                      className="btn btn-grad-secondary btn-block"
+                      name="back"
+                    >
+                      Back
+                    </button>
+                  </div>
+                </div>
+              </React.Fragment>
+            )
+          }}
+        </Form>
+      </Spinner>
 
-        <style jsx="">{`
-          .dashboard {
-            border-radius: 0px 5px 0 0;
-          }
-          .col-4 {
-            padding: 0;
-          }
-          .row {
-            border-radius: 5px;
-          }
-          .side-content {
-            background-color: #343a40;
-            border-radius: 0 5px 5px 0;
-          }
-          .spinner {
-            margin-top: 200px;
-            margin-bottom: 200px;
-          }
-        `}</style>
-      </main>
+      <style jsx="">{`
+        .col-4 {
+          padding: 0;
+        }
+        .row {
+          border-radius: 5px;
+        }
+        .side-content {
+          background-color: #343a40;
+          border-radius: 0 5px 5px 0;
+        }
+        .spinner {
+          margin-top: 200px;
+          margin-bottom: 200px;
+        }
+      `}</style>
     </React.Fragment>
   )
 }

@@ -12,7 +12,17 @@ const CustomModal = ({
   title,
   ...rest
 }) => {
-  const [codeNo, setCodeNo] = useState(null)
+  const [codeNo, setCodeNo] = useState('')
+
+  const errorMessage = () => {
+    if (!codeNo) return '"Policy Number" is not allowed to be empty'
+
+    if (codeNo && !codeNo.match(/^[a-zA-Z0-9-]+$/))
+      return '"Policy Number" must only have a number and letter with hyphen'
+    if (codeNo && codeNo.length !== 15)
+      return '"Policy Number" must be equal to 15 characters long'
+    return null
+  }
 
   return (
     <Modal isOpen={modal} toggle={toggle} className={`${className}`} {...rest}>
@@ -30,9 +40,9 @@ const CustomModal = ({
               className="form-control"
             />
           </div>
-          {!codeNo && (
-            <p className="error-message text-danger p-1">{`"Policy Number" is not allowed to be empty`}</p>
-          )}
+
+          <p className="error-message text-danger p-1">{errorMessage()}</p>
+
           <style jsx="">{`
             .error-message {
               font-size: 13px;
@@ -46,7 +56,7 @@ const CustomModal = ({
           className={`btn btn-${(primary && primary.type) || 'primary'} btn-sm`}
           name="primary"
           onClick={e => {
-            if (!codeNo) return
+            if (errorMessage()) return
             toggle(e, codeNo)
             setCodeNo(null)
           }}

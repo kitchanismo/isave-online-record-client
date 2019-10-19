@@ -1,19 +1,22 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import Table from '../../common/table'
-import useClient from '../../../hooks/useClient'
+import useReport from '../../../hooks/useReport'
 import { sortBy } from '../../../services/utilsService'
 import { Link } from 'react-router-dom'
 import { formatDate } from './../../../services/utilsService'
+import { restoreUser } from './../../../services/userService'
 import { ClientContext } from '../../../context'
 import EnforcedModal from '../../common/modalEnforced'
 import ApprovedModal from '../../common/modalApproved'
+import Spinner from './../../common/spinner'
 
 const Reports = props => {
-  let name = new URLSearchParams(props.location.search).get('name')
+  //let name = new URLSearchParams(props.location.search).get('name')
+  const { name } = props.match.params
 
   const [sortColumn, setSortColumn] = useState({ path: 'name', order: 'asc' })
 
-  const { clients, setClients, setRefresh } = useClient(name)
+  const { reports, setReports, setRefresh, isLoaded } = useReport(name)
 
   const [client, setClient] = useState(null)
 
@@ -23,7 +26,16 @@ const Reports = props => {
 
   const handleSort = sortColumn => {
     setSortColumn(sortColumn)
-    setClients(sortBy(clients, sortColumn))
+    setReports(sortBy(reports, sortColumn))
+  }
+
+  const calculateAge = date => {
+    if (!date) return 'N/A'
+    const birthdate = new Date(formatDate(date))
+
+    const ageDif = Date.now() - birthdate.getTime()
+    const ageDate = new Date(ageDif)
+    return Math.abs(ageDate.getUTCFullYear() - 1970)
   }
 
   const enforcedCol = [
@@ -32,10 +44,19 @@ const Reports = props => {
       label: '#'
     },
     {
-      path: 'client.firstname',
+      path: 'firstname',
       label: 'Fullname',
       content: client =>
         `${client.firstname}, ${client.lastname} ${client.middlename}`
+    },
+    {
+      path: 'birthdate',
+      label: 'Age',
+      content: client => calculateAge(client.birthdate)
+    },
+    {
+      path: 'gender',
+      label: 'Gender'
     },
     {
       path: 'codeNo',
@@ -43,7 +64,7 @@ const Reports = props => {
     },
     {
       path: 'mode',
-      label: 'Mode of Payment'
+      label: 'Mode'
     },
     {
       path: 'dateInsured',
@@ -56,11 +77,6 @@ const Reports = props => {
       content: client => (
         <div className="row pl-1 pt-1 pr-1">
           <div className="d-flex justify-content-between">
-            <Link to={`/clients/${client.id}`}>
-              <button className="btn btn-sm btn-outline-primary ml-1">
-                VIEW
-              </button>
-            </Link>
             <Link to={`/clients/edit/${client.id}`}>
               <button className="btn btn-sm btn-outline-warning ml-1">
                 EDIT
@@ -87,14 +103,14 @@ const Reports = props => {
       label: '#'
     },
     {
-      path: 'client.firstname',
+      path: 'firstname',
       label: 'Fullname',
       content: client =>
         `${client.firstname}, ${client.lastname} ${client.middlename}`
     },
     {
       path: 'mode',
-      label: 'Mode of Payment'
+      label: 'Mode'
     },
     {
       path: 'dateInsured',
@@ -107,12 +123,6 @@ const Reports = props => {
       content: client => (
         <div className="row pl-1 pt-1 pr-1">
           <div className="d-flex justify-content-between">
-            <Link to={`/clients/${client.id}`}>
-              <button className="btn btn-sm btn-outline-primary ml-1">
-                VIEW
-              </button>
-            </Link>
-
             <button
               onClick={e => {
                 setClient(client)
@@ -135,14 +145,24 @@ const Reports = props => {
       label: '#'
     },
     {
-      path: 'client.firstname',
+      path: 'firstname',
       label: 'Fullname',
       content: client =>
         `${client.firstname}, ${client.lastname} ${client.middlename}`
     },
     {
+      path: 'birthdate',
+      label: 'Age',
+      content: client => calculateAge(client.birthdate)
+    },
+
+    {
+      path: 'gender',
+      label: 'Gender'
+    },
+    {
       path: 'mode',
-      label: 'Mode of Payment'
+      label: 'Mode'
     },
     {
       path: 'dateInsured',
@@ -151,7 +171,7 @@ const Reports = props => {
     },
     {
       path: 'expiredDate',
-      label: 'Date Expire',
+      label: 'Due Date',
       content: client => formatDate(client.expiredDate)
     },
     {
@@ -160,12 +180,6 @@ const Reports = props => {
       content: client => (
         <div className="row pl-1 pt-1 pr-1">
           <div className="d-flex justify-content-between">
-            <Link to={`/clients/${client.id}`}>
-              <button className="btn btn-sm btn-outline-primary ml-1">
-                VIEW
-              </button>
-            </Link>
-
             <button
               onClick={e => {
                 setClient(client)
@@ -188,14 +202,23 @@ const Reports = props => {
       label: '#'
     },
     {
-      path: 'client.firstname',
+      path: 'firstname',
       label: 'Fullname',
       content: client =>
         `${client.firstname}, ${client.lastname} ${client.middlename}`
     },
     {
+      path: 'birthdate',
+      label: 'Age',
+      content: client => calculateAge(client.birthdate)
+    },
+    {
+      path: 'gender',
+      label: 'Gender'
+    },
+    {
       path: 'mode',
-      label: 'Mode of Payment'
+      label: 'Mode'
     },
     {
       path: 'dateInsured',
@@ -204,23 +227,8 @@ const Reports = props => {
     },
     {
       path: 'expiredDate',
-      label: 'Date Expire',
+      label: 'Due Date',
       content: client => formatDate(client.expiredDate)
-    },
-    {
-      key: 'actions',
-      label: 'Actions',
-      content: client => (
-        <div className="row pl-1 pt-1 pr-1">
-          <div className="d-flex justify-content-between">
-            <Link to={`/clients/${client.id}`}>
-              <button className="btn btn-sm btn-outline-primary ml-1">
-                VIEW
-              </button>
-            </Link>
-          </div>
-        </div>
-      )
     }
   ]
 
@@ -230,10 +238,20 @@ const Reports = props => {
       label: '#'
     },
     {
-      path: 'client.firstname',
+      path: 'firstname',
       label: 'Fullname',
       content: client =>
         `${client.firstname}, ${client.lastname} ${client.middlename}`
+    },
+
+    {
+      path: 'birthdate',
+      label: 'Age',
+      content: client => calculateAge(client.birthdate)
+    },
+    {
+      path: 'gender',
+      label: 'Gender'
     },
     {
       path: 'codeNo',
@@ -241,7 +259,7 @@ const Reports = props => {
     },
     {
       path: 'mode',
-      label: 'Mode of Payment'
+      label: 'Mode'
     },
     {
       path: 'dateInsured',
@@ -254,12 +272,6 @@ const Reports = props => {
       content: client => (
         <div className="row pl-1 pt-1 pr-1">
           <div className="d-flex justify-content-between">
-            <Link to={`/clients/${client.id}`}>
-              <button className="btn btn-sm btn-outline-primary ml-1">
-                VIEW
-              </button>
-            </Link>
-
             <button
               onClick={e => {
                 onRetrieved(client.id).then(data => setRefresh(r => !r))
@@ -281,31 +293,77 @@ const Reports = props => {
       label: '#'
     },
     {
-      path: 'client.firstname',
+      path: 'firstname',
       label: 'Fullname',
       content: client =>
         `${client.firstname}, ${client.lastname} ${client.middlename}`
     },
-    ,
+    {
+      path: 'birthdate',
+      label: 'Age',
+      content: client => calculateAge(client.birthdate)
+    },
+    {
+      path: 'gender',
+      label: 'Gender'
+    },
     {
       path: 'codeNo',
       label: 'Policy #'
     },
     {
       path: 'coverage',
-      label: 'Coverage'
+      label: 'Coverage(Year)'
+    }
+  ]
+
+  const archivedCol = [
+    {
+      path: 'id',
+      label: '#'
+    },
+    {
+      path: 'username',
+      label: 'Username'
+    },
+    {
+      path: 'profile.lastname',
+      key: 'fullname',
+      label: 'Fullname',
+      content: user =>
+        user.profile
+          ? `${user.profile.firstname}, ${user.profile.middlename} ${user.profile.lastname}`
+          : ''
+    },
+
+    {
+      path: 'position',
+      label: 'Position'
+    },
+    {
+      path: 'profile.branch.name',
+      label: 'Branch'
+    },
+    {
+      path: 'profile.codeNo',
+      key: 'codeNo',
+      label: 'Code #',
+      content: ({ profile }) => (profile ? profile.codeNo : '')
     },
     {
       key: 'actions',
       label: 'Actions',
-      content: client => (
+      content: user => (
         <div className="row pl-1 pt-1 pr-1">
-          <div className="d-flex justify-content-between">
-            <Link to={`/clients/${client.id}`}>
-              <button className="btn btn-sm btn-outline-primary ml-1">
-                VIEW
-              </button>
-            </Link>
+          <div className="d-flex justify-content-around">
+            <button
+              onClick={() =>
+                restoreUser(user.id).then(data => setRefresh(r => !r))
+              }
+              className="btn btn-sm btn-outline-primary ml-1"
+            >
+              RESTORE
+            </button>
           </div>
         </div>
       )
@@ -320,12 +378,15 @@ const Reports = props => {
         return forApprovalCol
       case 'lapsed':
         return lapsedCol
+
       case 'cancelled':
         return cancelledCol
       case 'near-expiration':
         return nearExpirationCol
       case 'gpa':
         return gpaCol
+      case 'user-archived':
+        return archivedCol
       default:
         break
     }
@@ -339,12 +400,15 @@ const Reports = props => {
         return 'For Approval'
       case 'lapsed':
         return 'Lapsed Policy'
+
       case 'cancelled':
         return 'Cancelled Policy'
       case 'near-expiration':
         return 'Near Expiration'
       case 'gpa':
         return 'GPA'
+      case 'user-archived':
+        return 'User Archived'
       default:
         return 'Reports'
     }
@@ -399,35 +463,42 @@ const Reports = props => {
   }
 
   return (
-    <main
-      role="main"
-      className="dashboard col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 bg-light border border-secondary"
-    >
+    <React.Fragment>
       {client && renderModalEnforced(client)}
       {renderModalApproved()}
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 className="h2">{title()}</h1>
-        <button className="btn btn-sm btn-outline-success">
+        <button className="btn btn-sm btn-grad-secondary ">
           <span className="fa fa-print mr-1"></span>
           PRINT
         </button>
       </div>
-
-      <Table
-        columns={columns()}
-        data={clients}
-        sortColumn={sortColumn}
-        onSort={handleSort}
-      />
+      <div className="wrapper-client">
+        <Spinner isLoaded={isLoaded} className="spinner mt-5 pt-5">
+          <Table
+            columns={columns()}
+            data={reports}
+            sortColumn={sortColumn}
+            onSort={handleSort}
+          />
+          {isLoaded && reports.length === 0 && (
+            <h6 className="mt-2 mb-5">No records found!</h6>
+          )}
+        </Spinner>
+      </div>
       <style jsx="">{`
-        .dashboard {
-          border-radius: 0px 7px 0 0;
-        }
         .fa-print {
           margin-top: 0 !important;
         }
+        .wrapper-client {
+          margin: 0;
+          padding: 0;
+          height: 550px;
+          overflow-y: auto;
+          overflow-x: hidden;
+        }
       `}</style>
-    </main>
+    </React.Fragment>
   )
 }
 

@@ -34,6 +34,14 @@ export function addBranch(branch) {
   return http.post('/api/branches', branch).then(data => data.data)
 }
 
+export function getBranch(id) {
+  return http.get('/api/branches/show/' + id).then(data => data.data)
+}
+
+export function updateBranch(id, branch) {
+  return http.put('/api/branches/edit/' + id, branch).then(data => data.data)
+}
+
 export async function addManager(user) {
   http.sendJwt(auth.jwt())
   return await http.post('/api/users', user).then(data => data.data)
@@ -62,7 +70,12 @@ export function getPagedUsers(num, limit, search = '', status) {
 
 export function verifyUser(id) {
   http.sendJwt(auth.jwt())
-  return http.get(`/api/users/verify/${id}`).then(data => data.data.data)
+  return http.get(`/api/users/status/${id}`).then(data => data.data.data)
+}
+
+export function archivedUser() {
+  http.sendJwt(auth.jwt())
+  return http.get(`/api/users/archived`).then(data => data.data.archived)
 }
 
 export function statusCount() {
@@ -83,4 +96,9 @@ export function getUnverifyUser() {
 export function deleteUser(id) {
   http.sendJwt(auth.jwt())
   return http.delete(`/api/users/${id}`).then(data => data.data)
+}
+
+export function restoreUser(id) {
+  http.sendJwt(auth.jwt())
+  return http.get(`/api/users/restore/${id}`).then(data => data.data)
 }

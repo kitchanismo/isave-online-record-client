@@ -21,6 +21,24 @@ body {
   background-size: cover;
 }
 
+.h2 {
+  color: #343a40 !important;
+}
+
+.badge-success {
+  background: #02aab0 !important;
+}
+
+.btn-outline-primary {
+  color: #02aab0 !important;
+  border-color: #02aab0 !important;
+}
+
+.btn-outline-primary:hover {
+  background: #02aab0 !important;
+  color: white !important;
+}
+
 /* .btn {
   border: 1px solid transparent !important;
 } */

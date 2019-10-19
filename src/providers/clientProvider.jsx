@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { ClientContext } from '../context'
 import {
+  getClient,
+  updateClient,
   getStatus,
   addClient,
   approved,
@@ -40,6 +42,15 @@ const ClientProvider = props => {
     setStatus(await getStatus())
   }
 
+  const handleGetClient = async id => {
+    return await getClient(id)
+  }
+
+  const handleUpdateClient = async (id, client) => {
+    await updateClient(id, client)
+    //setStatus(await getStatus())
+  }
+
   return (
     <ClientContext.Provider
       value={{
@@ -48,7 +59,9 @@ const ClientProvider = props => {
         onApproved: handleApproved,
         onCancelled: handleCancelled,
         onRetrieved: handleRetrieved,
-        onEnforced: handleEnforced
+        onEnforced: handleEnforced,
+        onUpdateClient: handleUpdateClient,
+        getClient: handleGetClient
       }}
     >
       {props.children}

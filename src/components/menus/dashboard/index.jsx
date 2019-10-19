@@ -10,46 +10,38 @@ const Dashboard = ({ auth, ...props }) => {
   const isSales = position === 'sales'
   return (
     <React.Fragment>
-      <main
-        role="main"
-        className="dashboard col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 bg-light border border-secondary"
-      >
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-          <h1 className="h2">Dashboard</h1>
-          {!isSales && (
-            <div>
-              <button
-                onClick={() => props.history.replace('/dashboard/new-fs')}
-                className="btn btn-sm btn-outline-success"
-              >
-                <span className="fa fa-plus mr-1"></span>
-                FUTURE SAVINGS
-              </button>
-              <button
-                onClick={() => props.history.replace('/dashboard/new-gpa')}
-                className="btn btn-sm btn-outline-success ml-2"
-              >
-                <span className="fa fa-plus mr-1"></span>
-                GPA FORM
-              </button>
-            </div>
-          )}
-        </div>
-        <div className="row">
-          <div className="col-12 mt-3">
-            <Charts></Charts>
+      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 className="h2">Dashboard</h1>
+        {!isSales && auth.getCurrentUser().position !== 'admin' && (
+          <div>
+            <button
+              onClick={() => props.history.replace('/dashboard/new-fs')}
+              className="btn btn-sm btn-grad-secondary"
+            >
+              <span className="fa fa-plus mr-1"></span>
+              FUTURE SAVINGS
+            </button>
+            <button
+              onClick={() => props.history.replace('/dashboard/new-gpa')}
+              className="btn btn-sm btn-grad-secondary  ml-2"
+            >
+              <span className="fa fa-plus mr-1"></span>
+              GPA FORM
+            </button>
           </div>
+        )}
+      </div>
+      <div className="row">
+        <div className="col-12 mt-3">
+          <Charts></Charts>
         </div>
+      </div>
 
-        <style jsx="">{`
-          .dashboard {
-            border-radius: 0px 7px 0 0;
-          }
-          .fa-plus {
-            margin-top: 0 !important;
-          }
-        `}</style>
-      </main>
+      <style jsx="">{`
+        .fa-plus {
+          margin-top: 0 !important;
+        }
+      `}</style>
     </React.Fragment>
   )
 }

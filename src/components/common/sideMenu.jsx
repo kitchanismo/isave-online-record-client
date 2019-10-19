@@ -13,26 +13,18 @@ const SideMenu = ({ auth, ...props }) => {
   } = useContext(UserContext)
 
   const {
-    status: {
-      total,
-      forApproval,
-      lapsed,
-      nearExpiration,
-      gpa,
-      enforced,
-      cancelled
-    }
+    status: { total, forApproval, lapsed, nearExpiration, due }
   } = useContext(ClientContext)
 
   const reportMenu = (name, label, value) => {
     return (
       <Link
-        onClick={() => setToggle(false)}
+        //onClick={() => setToggle(false)}
         className="dropdown-item"
-        to={{ pathname: '/reports', search: '?name=' + name }}
+        to={`/reports/${name}`}
       >
         {label}
-        <span className="badge badge-sm badge-secondary ml-1 mt-0">
+        <span className="badge badge-sm badge-secondary ml-2 mt-0">
           {value ? value : ''}
         </span>
       </Link>
@@ -106,7 +98,8 @@ const SideMenu = ({ auth, ...props }) => {
           <li className="nav-item">
             <div className="row">
               <div className="d-flex ml-3">
-                <a
+                <NavLink
+                  to="/reports/for-approval"
                   onClick={() => setToggle(!toggle)}
                   className="nav-link text-white pr-1"
                 >
@@ -114,7 +107,7 @@ const SideMenu = ({ auth, ...props }) => {
                   <span
                     className={`fa fa-angle-${!toggle ? 'down' : 'up'} ml-1`}
                   ></span>
-                </a>
+                </NavLink>
               </div>
               <div className="m-0 p-0">
                 <a
@@ -131,16 +124,21 @@ const SideMenu = ({ auth, ...props }) => {
 
             {toggle && (
               <div className="dropdown">
-                {reportMenu('cancelled', 'Cancelled Policy', cancelled)}
-                {reportMenu('gpa', 'GPA', gpa)}
-                {reportMenu('enforced', 'Enforced Client', enforced)}
                 {reportMenu('for-approval', 'For Approval', forApproval)}
-                {reportMenu('lapsed', 'Lapsed Policy', lapsed)}
                 {reportMenu(
                   'near-expiration',
                   'Near Expiration',
                   nearExpiration
                 )}
+
+                {reportMenu('lapsed', 'Lapsed Policy', lapsed)}
+                <hr className="mx-2" />
+                {reportMenu('enforced', 'Enforced Client')}
+                {reportMenu('gpa', 'GPA')}
+                {reportMenu('cancelled', 'Cancelled Policy')}
+                <hr className="mx-2" />
+
+                {reportMenu('user-archived', 'User Archived')}
               </div>
             )}
           </li>

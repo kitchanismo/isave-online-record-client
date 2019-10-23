@@ -129,7 +129,7 @@ const SideMenu = ({ auth, ...props }) => {
                   'Near Expiration',
                   nearExpiration
                 )}
-
+                {reportMenu('due', 'Due Policy', due)}
                 {reportMenu('lapsed', 'Lapsed Policy', lapsed)}
                 <hr className="mx-2" />
                 {reportMenu('enforced', 'Enforced Client')}

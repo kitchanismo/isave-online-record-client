@@ -1,6 +1,6 @@
 import http from './httpService'
 import auth from './authService'
-import { mapToSelect } from './utilsService'
+import { mapToSelect, cap } from './utilsService'
 
 export async function getPositions() {
   return await http
@@ -9,6 +9,23 @@ export async function getPositions() {
     .then(({ positions }) => {
       return positions.map(position => {
         return mapToSelect(position)
+      })
+    })
+}
+
+export async function getPromos() {
+  http.sendJwt(auth.jwt())
+  return await http
+    .get('/api/users/promo-officers')
+    .then(data => data.data)
+    .then(({ users }) => {
+      return users.map(user => {
+        const { firstname, lastname, middlename } = user.profile
+        return {
+          id: user.id,
+          label: cap(`${firstname} ${middlename} ${lastname}`),
+          value: `${firstname} ${middlename} ${lastname}`
+        }
       })
     })
 }

@@ -1,14 +1,27 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import Form from '../../common/form'
 import { toast } from 'react-toastify'
 import Joi from 'joi-browser'
-import { formatDate, joiLettersOnly } from '../../../services/utilsService'
+import {
+  formatDate,
+  joiLettersOnly,
+  joiMobileNumber
+} from '../../../services/utilsService'
 import auth from '../../../services/authService'
+import { getPromos } from '../../../services/userService'
 
 import { ClientContext } from '../../../context'
 
 const AddClient = props => {
   const { onAddClient, status } = useContext(ClientContext)
+  const [promos, setPromos] = useState([])
+
+  useEffect(() => {
+    getPromos().then(promos => {
+      setPromos(promos)
+    })
+  }, [])
+
   const [client, setClient] = useState({
     firstname: '',
     lastname: '',
@@ -16,6 +29,7 @@ const AddClient = props => {
     address: '',
     contact: '',
     birthdate: '',
+    promo: '',
     dateInsured: formatDate(Date.now()),
     expiredDate: '',
     codeNo: '',
@@ -26,6 +40,7 @@ const AddClient = props => {
     forApproval: true
   })
 
+  const [selectedPromo, setSelectedPromo] = useState(null)
   const [selectedGender, setSelectedGender] = useState(null)
   const [selectedMode, setSelectedMode] = useState(null)
   const [selectedCivil, setSelectedCivil] = useState(null)
@@ -68,7 +83,7 @@ const AddClient = props => {
     middlename: joiLettersOnly('Middlename'),
     lastname: joiLettersOnly('Lastname'),
     codeNo: codeNoValidation(),
-    contact: Joi.optional(),
+    contact: joiMobileNumber('Mobile Contact'),
     address: Joi.optional(),
     expiredDate: Joi.optional(),
     birthdate: Joi.string()
@@ -87,15 +102,30 @@ const AddClient = props => {
       .label('Mode of Payment'),
     civil: Joi.string()
       .required()
-      .label('Civil Status')
+      .label('Civil Status'),
+    promo: Joi.string()
+      .required()
+      .label('Promo Officer')
   }
 
   const handleChangeGender = gender => setSelectedGender(gender)
 
   const handleChangeCivil = civil => setSelectedCivil(civil)
 
+  const handleChangePromo = promo => setSelectedPromo(promo)
+
   const handleChangeMode = mode => {
     setSelectedMode(mode)
+
+    if (mode) {
+      const expiredDate = getExpiredDate(client.dateInsured, mode.value)
+
+      setClient({
+        ...client,
+        mode: mode.value,
+        expiredDate
+      })
+    }
   }
 
   const getExpiredDate = (date, mode) => {
@@ -113,10 +143,13 @@ const AddClient = props => {
       setErrors({ codeNo: `"Policy Number" is not allowed to be empty` })
       return
     }
-    const expiredDate = getExpiredDate(client.dateInsured, client.mode)
+
+    const expiredDate = getExpiredDate(client.dateInsured, selectedMode.value)
 
     const _client = {
       ...client,
+      mode: selectedMode ? selectedMode.value : '',
+      promo: selectedPromo.id,
       dateInsured: new Date(client.dateInsured).toISOString(),
       expiredDate: new Date(expiredDate).toISOString(),
       userInsured: auth.getCurrentUser().id
@@ -135,14 +168,17 @@ const AddClient = props => {
         birthdate: '',
         codeNo: '',
         userInsured: '',
+        promo: '',
         gender: '',
         mode: '',
+        expiredDate: '',
         civil: '',
         forApproval: true
       })
       setSelectedGender(null)
       setSelectedMode(null)
       setSelectedCivil(null)
+      setSelectedPromo(null)
     } catch (error) {
       console.log(error)
     }
@@ -216,8 +252,13 @@ const AddClient = props => {
   }
 
   const handleDateInsured = date => {
+    const expiredDate = selectedMode
+      ? getExpiredDate(date, selectedMode.value)
+      : ''
+
     setClient({
       ...client,
+      expiredDate,
       dateInsured: formatDate(date)
     })
   }
@@ -271,7 +312,7 @@ const AddClient = props => {
                 {renderDatePicker('birthdate', 'Birthdate', {
                   onChange: handleBirthdate
                 })}
-                {renderInput('contact', 'Contact')}
+                {renderInput('contact', 'Mobile Contact')}
                 {renderTextArea('address', 'Address')}
               </div>
 
@@ -286,6 +327,16 @@ const AddClient = props => {
                   selectedMode,
                   handleChangeMode,
                   modes
+                )}
+                {renderInput('expiredDate', 'Due Date', 'text', '', {
+                  disabled: true
+                })}
+                {renderSelect(
+                  'promo',
+                  'Promo Officer',
+                  selectedPromo,
+                  handleChangePromo,
+                  promos
                 )}
                 {!client.forApproval && renderInput('codeNo', 'Policy No')}
 

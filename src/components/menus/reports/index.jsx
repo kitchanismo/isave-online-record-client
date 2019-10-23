@@ -9,6 +9,7 @@ import { ClientContext } from '../../../context'
 import EnforcedModal from '../../common/modalEnforced'
 import ApprovedModal from '../../common/modalApproved'
 import Spinner from './../../common/spinner'
+import auth from '../../../services/authService'
 
 const Reports = props => {
   //let name = new URLSearchParams(props.location.search).get('name')
@@ -378,7 +379,8 @@ const Reports = props => {
         return forApprovalCol
       case 'lapsed':
         return lapsedCol
-
+      case 'due':
+        return lapsedCol
       case 'cancelled':
         return cancelledCol
       case 'near-expiration':
@@ -392,6 +394,13 @@ const Reports = props => {
     }
   }
 
+  const preparecColumns = () => {
+    if (!auth.isPromo()) return columns()
+
+    const _columns = [...columns()]
+    return _columns.filter(c => c.key !== 'actions')
+  }
+
   const title = () => {
     switch (name) {
       case 'enforced':
@@ -400,7 +409,8 @@ const Reports = props => {
         return 'For Approval'
       case 'lapsed':
         return 'Lapsed Policy'
-
+      case 'Due':
+        return 'Due Policy'
       case 'cancelled':
         return 'Cancelled Policy'
       case 'near-expiration':
@@ -476,7 +486,7 @@ const Reports = props => {
       <div className="wrapper-client">
         <Spinner isLoaded={isLoaded} className="spinner mt-5 pt-5">
           <Table
-            columns={columns()}
+            columns={preparecColumns()}
             data={reports}
             sortColumn={sortColumn}
             onSort={handleSort}

@@ -52,6 +52,11 @@ const isAdminOrManager = () => {
   return position === 'manager' || position === 'admin'
 }
 
+const isPromo = () => {
+  const position = getDecodeToken().data.position
+  return position === 'promo'
+}
+
 const isAdmin = () => {
   const position = getDecodeToken().data.position
 
@@ -83,5 +88,6 @@ export default {
   jwt,
   isValidUser,
   isAdmin,
-  isAdminOrManager
+  isAdminOrManager,
+  isPromo
 }

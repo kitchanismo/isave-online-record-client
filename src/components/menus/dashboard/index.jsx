@@ -5,14 +5,11 @@ import withAuth from '../../hoc/withAuth'
 import { cap } from './../../../services/utilsService'
 
 const Dashboard = ({ auth, ...props }) => {
-  const { position } = auth.getCurrentUser()
-
-  const isSales = position === 'sales'
   return (
     <React.Fragment>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 className="h2">Dashboard</h1>
-        {!isSales && auth.getCurrentUser().position !== 'admin' && (
+        {!auth.isPromo() && !auth.isAdmin() && (
           <div>
             <button
               onClick={() => props.history.replace('/dashboard/new-fs')}

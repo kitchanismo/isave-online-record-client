@@ -5,121 +5,38 @@ import useReport from '../../../hooks/useReport'
 import { formatDate } from '../../../services/utilsService'
 import { getStatistics } from '../../../services/clientService'
 
-const Charts = ({ dimension = 400 }) => {
-  const { reports = [], isLoaded } = useReport('near-expiration')
-
-  const [statistic, setStatistic] = useState([
+const useOptions = title => {
+  const [series, setSeries] = useState([
     {
       name: 'series-1',
       data: []
     }
   ])
-
-  const [fsf, setFsf] = useState([
-    {
-      name: 'series-1',
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    }
-  ])
-
-  useEffect(() => {
-    getStatistics().then(data => {
-      setStatistic([{ name: 'series-1', data }])
-    })
-  }, [])
-
-  const [optionsSales, setOptionsSales] = useState({
+  const [options] = useState({
     theme: {
-      palette: 'palette6'
+      palette: 'palette5'
     },
     chart: {
       id: 'basic-bar'
     },
     xaxis: {
       categories: [
-        'jan',
-        'feb',
-        'mar',
-        'apr',
-        'may',
-        'jun',
-        'jul',
-        'aug',
-        'sep',
-        'oct',
-        'nov',
-        'dec'
+        'JAN',
+        'FEB',
+        'MAR',
+        'APR',
+        'MAY',
+        'JUN',
+        'JUL',
+        'AUG',
+        'SEP',
+        'OCT',
+        'NOV',
+        'DEC'
       ]
     },
     title: {
-      text: '2019 Client Statistic',
-      align: 'center',
-      margin: 0,
-      offsetX: 0,
-      offsetY: 0,
-      floating: false,
-      style: {
-        fontSize: '20px',
-        color: theme.secondary
-      }
-    },
-    grid: {
-      show: true,
-      borderColor: 'black',
-      strokeDashArray: 1,
-      position: 'back',
-      xaxis: {
-        lines: {
-          show: false
-        }
-      },
-      yaxis: {
-        lines: {
-          show: false
-        }
-      },
-      row: {
-        colors: undefined,
-        opacity: 0.5
-      },
-      column: {
-        colors: undefined,
-        opacity: 0.5
-      },
-      padding: {
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0
-      }
-    }
-  })
-
-  const [optionsFSF, setOptionsFSF] = useState({
-    theme: {
-      palette: 'palette6'
-    },
-    chart: {
-      id: 'basic-bar'
-    },
-    xaxis: {
-      categories: [
-        'jan',
-        'feb',
-        'mar',
-        'apr',
-        'may',
-        'jun',
-        'jul',
-        'aug',
-        'sep',
-        'oct',
-        'nov',
-        'dec'
-      ]
-    },
-    title: {
-      text: 'Total FSF',
+      text: title,
       align: 'center',
       margin: 10,
       offsetX: 0,
@@ -162,9 +79,30 @@ const Charts = ({ dimension = 400 }) => {
     }
   })
 
+  return { options, series, setSeries }
+}
+
+const Charts = props => {
+  const { reports = [], isLoaded } = useReport('near-expiration')
+
+  const { options: fspOptions, series: fsp, setSeries: setFSP } = useOptions(
+    '2019 FSP Statistic'
+  )
+
+  const { options: gpaOptions, series: gpa, setSeries: setGPA } = useOptions(
+    '2019 GPA Statistic'
+  )
+
+  useEffect(() => {
+    getStatistics().then(data => {
+      setFSP([{ name: 'series-1', data: data.fsp }])
+      setGPA([{ name: 'series-1', data: data.gpa }])
+    })
+  }, [])
+
   const chart = () => (
     <React.Fragment>
-      <div className="row d-flex justify-content-around">
+      <div className="row d-flex justify-content-around mx-2">
         <ul className="list-group">
           <li className="header-list pb-0 list-group-item d-flex justify-content-between align-items-center">
             <span className="font-weight-bold">Client Near Expiration</span>
@@ -211,15 +149,15 @@ const Charts = ({ dimension = 400 }) => {
         <Chart
           key="Sales"
           type="line"
-          options={optionsSales}
-          series={statistic}
+          options={fspOptions}
+          series={fsp}
           width="400px"
         />
         <Chart
           key="FSF"
           type="line"
-          options={optionsFSF}
-          series={fsf}
+          options={gpaOptions}
+          series={gpa}
           width="400px"
         />
       </div>

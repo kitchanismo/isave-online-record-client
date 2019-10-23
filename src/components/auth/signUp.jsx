@@ -52,8 +52,6 @@ const SignUp = ({ auth, ...props }) => {
 
   const [errors, setErrors] = useState({})
 
-
-
   const schema = {
     username: Joi.string()
       .required()

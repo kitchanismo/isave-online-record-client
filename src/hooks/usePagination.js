@@ -86,6 +86,7 @@ const usePagination = ({
           dispatch({ type: SET_PAGES, payload: 0 })
           dispatch({ type: SET_PAGENUM, payload: 1 })
           dispatch({ type: SET_NOT_FOUND, payload: true })
+          dispatch({ type: SET_UNVERIFY, payload: 0 })
         }
       })
   }, [toggle, title, pageNum, status])

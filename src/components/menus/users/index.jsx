@@ -4,10 +4,12 @@ import { UserContext } from '../../../context'
 import Paginate from '../../common/paginate'
 import CustomModal from '../../common/modal'
 import { verifyUser } from '../../../services/userService'
+import { cap } from '../../../services/utilsService'
 import SearchForm from '../../common/searchForm'
 import { pagination } from '../../../config.json'
 import { Link } from 'react-router-dom'
 import Spinner from '../../common/spinner'
+import { toast } from 'react-toastify'
 
 import withAuth from './../../hoc/withAuth'
 
@@ -125,8 +127,13 @@ const Users = ({ auth, ...props }) => {
     setModalDelete(modalDelete => !modalDelete)
     if (target && target.name === 'primary') {
       await doDelete(selectedUser)
-      setSelectedUser({})
+      if (selectedUser.position === 'manager') {
+        toast.info(
+          `${cap(selectedUser.profile.branch.name)} branch is now available`
+        )
+      }
 
+      setSelectedUser({})
       onRefresh()
     }
   }
@@ -166,7 +173,6 @@ const Users = ({ auth, ...props }) => {
       onSetEnd(end - 1)
       return
     }
-    onRefresh()
   }
 
   const handleSort = sortColumn => {

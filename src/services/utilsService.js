@@ -45,6 +45,28 @@ export const joiLettersOnly = label => {
     .label(label)
 }
 
+export const joiMobileNumber = label => {
+  return Joi.string()
+    .required()
+    .regex(/^([0|\+[0-9]{1,5})?([7-9][0-9]{9})$/)
+    .error(errors => {
+      errors.forEach(err => {
+        switch (err.type) {
+          case 'any.empty':
+            err.message = `"${label}" is not allowed to be empty`
+            break
+          case 'string.regex.base':
+            err.message = `"${label}" must be a valid mobile number`
+            break
+          default:
+            break
+        }
+      })
+      return errors
+    })
+    .label(label)
+}
+
 export const mapToSelect = ({ id, name }) => {
   return { id, label: cap(name), value: name }
 }

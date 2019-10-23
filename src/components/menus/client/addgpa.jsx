@@ -2,7 +2,11 @@ import React, { useState, useContext } from 'react'
 import Form from '../../common/form'
 import Joi from 'joi-browser'
 import { toast } from 'react-toastify'
-import { formatDate, joiLettersOnly } from '../../../services/utilsService'
+import {
+  formatDate,
+  joiLettersOnly,
+  joiMobileNumber
+} from '../../../services/utilsService'
 
 import { ClientContext } from '../../../context'
 const AddGPA = props => {
@@ -13,6 +17,7 @@ const AddGPA = props => {
     lastname: '',
     middlename: '',
     birthdate: '',
+    dateInsured: formatDate(Date.now()),
     address: '',
     contact: '',
     codeNo: '',
@@ -28,6 +33,9 @@ const AddGPA = props => {
     firstname: joiLettersOnly('Firstname'),
     middlename: joiLettersOnly('Middlename'),
     lastname: joiLettersOnly('Lastname'),
+    dateInsured: Joi.string()
+      .required()
+      .label('Date Insured'),
     birthdate: Joi.string()
       .required()
       .label('Birthdate'),
@@ -37,7 +45,7 @@ const AddGPA = props => {
     coverage: Joi.number()
       .required()
       .label('Coverage'),
-    contact: Joi.optional(),
+    contact: joiMobileNumber('Mobile Number'),
     address: Joi.optional(),
     codeNo: Joi.number()
       .required()
@@ -47,9 +55,22 @@ const AddGPA = props => {
   const handleChangeCoverage = coverage => setSelectedCoverage(coverage)
 
   const handleChangeGender = gender => setSelectedGender(gender)
+
+  const handleDateInsured = date => {
+    setClient({
+      ...client,
+      dateInsured: formatDate(date)
+    })
+  }
+
   const handleSubmit = async (e, client) => {
     try {
-      await onAddClient({ ...client, isGPA: true })
+      await onAddClient({
+        ...client,
+        isGPA: true,
+        dateInsured: new Date(client.dateInsured).toISOString()
+      })
+
       toast.success('Saved')
 
       setClient({
@@ -58,6 +79,7 @@ const AddGPA = props => {
         middlename: '',
         address: '',
         contact: '',
+        dateInsured: '',
         codeNo: '',
         gender: '',
         birthdate: '',
@@ -139,6 +161,9 @@ const AddGPA = props => {
               </div>
 
               <div className="col-6">
+                {renderDatePicker('dateInsured', 'Date Insured', {
+                  onChange: handleDateInsured
+                })}
                 {renderInput('codeNo', 'GPA No.')}
 
                 {renderSelect(

@@ -40,7 +40,6 @@ const Form = props => {
     const errors = validate()
     setErrors(errors || {})
 
-   // console.log(errors)
     if (errors) return
 
     setIsDisable(true)
@@ -123,12 +122,12 @@ const Form = props => {
             setErrors(_errors)
           }}
           onChange={selectData => {
-            onChange(selectData)
-
             setData({
               ...data,
               [name]: selectData ? selectData.value : ''
             })
+
+            onChange(selectData)
           }}
           options={options}
         />

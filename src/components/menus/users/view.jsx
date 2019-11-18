@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { getUser } from './../../../services/userService'
-import { cap } from '../../../services/utilsService'
+import { cap, formatDate } from '../../../services/utilsService'
 import { appUrl } from '../../../config.json'
 import Spinner from '../../common/spinner'
 
@@ -30,22 +30,12 @@ const ViewUser = props => {
   return (
     <React.Fragment>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 className="h2">User Overview</h1>
+        <h1 className="h2">User Profile</h1>
       </div>
       <Spinner isLoaded={user.username !== ''} className="spinner">
         <div className="row mb-3">
           <div className="col-4 pr-0">
             <div className="card" style={{ width: 'auto' }}>
-              {/* <img
-                style={{
-                  padding: '10%',
-                  backgroundColor: '#343a40',
-                  height: '303px'
-                }}
-                src={`${appUrl}/user.png`}
-                className="card-img-top"
-                alt=""
-              /> */}
               <div className="card-body">
                 <h5 className="card-title">{`${cap(
                   user.profile.lastname
@@ -54,12 +44,18 @@ const ViewUser = props => {
                 )}`}</h5>
                 <p className="card-subtitle">{cap(user.username)}</p>
                 <span
-                  className={`mt-4 badge badge-${
+                  className={`mt-4  badge badge-${
                     user.status === 1 ? 'success' : 'danger'
                   }`}
                 >
                   {user.status === 1 ? 'active' : 'unverify'}
                 </span>
+                <p className="mt-2">
+                  Registered:
+                  <span className="text-secondary">
+                    &nbsp; {formatDate(user.created_at)}
+                  </span>
+                </p>
               </div>
             </div>
           </div>
@@ -69,28 +65,28 @@ const ViewUser = props => {
                 <h5 className="card-title">Personal Details</h5>
                 <br></br>
                 <p className="card-subtitle">
-                  Firstname:{' '}
+                  Firstname:&nbsp;
                   <span className="text-secondary">
                     {cap(user.profile.firstname)}
                   </span>
                 </p>
                 <br></br>
                 <p className="card-subtitle">
-                  Middlename:{' '}
+                  Middlename:&nbsp;
                   <span className="text-secondary">
                     {cap(user.profile.middlename)}
                   </span>
                 </p>
                 <br></br>
                 <p className="card-subtitle">
-                  Lastname:{' '}
+                  Lastname:&nbsp;
                   <span className="text-secondary">
                     {cap(user.profile.lastname)}
                   </span>
                 </p>
                 <br></br>
                 <p className="card-subtitle">
-                  Email:{' '}
+                  Email:&nbsp;
                   <span className="text-secondary">{user.profile.email}</span>
                 </p>
               </div>
@@ -100,19 +96,19 @@ const ViewUser = props => {
                 <h5 className="card-title">Employment Details</h5>
                 <br></br>
                 <p className="card-subtitle">
-                  Position:{'   '}
+                  Position:&nbsp;
                   <span className="text-secondary">{cap(user.position)}</span>
                 </p>
                 <br></br>
                 <p className="card-subtitle">
-                  Branch:{'   '}
+                  Branch:&nbsp;
                   <span className="text-secondary">
                     {cap(user.profile.branch ? user.profile.branch.name : '')}
                   </span>
                 </p>
                 <br></br>
                 <p className="card-subtitle">
-                  Code Number:{'   '}
+                  License Code Number:&nbsp;
                   <span className="text-secondary">
                     {cap(user.profile.codeNo)}
                   </span>
@@ -120,7 +116,7 @@ const ViewUser = props => {
                 <br></br>
                 {isAgent() && (
                   <p className="card-subtitle">
-                    Under by:{'   '}
+                    Under by:&nbsp;
                     <span className="text-secondary">
                       {cap(user.profile.branch.manager)}
                     </span>

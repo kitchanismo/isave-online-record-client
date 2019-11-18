@@ -25,8 +25,8 @@ const ClientProvider = props => {
     setStatus(await getStatus())
   }
 
-  const handleApproved = async (id, codeNo) => {
-    await approved(id, codeNo)
+  const handleApproved = async (id, client) => {
+    await approved(id, client)
     setStatus(await getStatus())
   }
   const handleCancelled = async id => {

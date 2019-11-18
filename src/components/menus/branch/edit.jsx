@@ -41,7 +41,10 @@ const EditBranch = props => {
   return (
     <React.Fragment>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 className="h2">Branch</h1>
+        <span>
+          <h1 className="h2">Branch Record Management</h1>
+          <h5 className="text-secondary">Edit Branch</h5>
+        </span>
       </div>
       <Spinner isLoaded={isLoaded} className="spinner">
         <div className="col-6 offset-3">

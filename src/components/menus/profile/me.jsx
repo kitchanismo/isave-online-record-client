@@ -25,7 +25,11 @@ const Me = props => {
   }, [])
 
   const isAgent = () => {
-    return user.position !== 'manager' && user.position !== 'admin'
+    return (
+      user.position !== 'manager' &&
+      user.position !== 'admin' &&
+      user.position !== 'super'
+    )
   }
   return (
     <React.Fragment>
@@ -127,7 +131,9 @@ const Me = props => {
                   <p className="card-subtitle">
                     Under by:{'   '}
                     <span className="text-secondary">
-                      {cap(user.profile.branch.manager)}
+                      {cap(
+                        user.profile.branch ? user.profile.branch.manager : ''
+                      )}
                     </span>
                   </p>
                 )}

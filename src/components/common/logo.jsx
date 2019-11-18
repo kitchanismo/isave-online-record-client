@@ -1,10 +1,10 @@
 import React from 'react'
-import cocolife from '../../img/cocolife.png'
+import infomatech from '../../img/infomatech.png'
 const Logo = props => {
   return (
     <React.Fragment>
       <div className="row m-0" {...props}>
-        <img className="logo pt-5 px-3" src={cocolife}></img>
+        <img className="logo pt-5 px-3" src={infomatech}></img>
       </div>
       <style jsx="">{`
         .logo {

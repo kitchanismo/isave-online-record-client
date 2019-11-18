@@ -80,10 +80,10 @@ const SignUp = ({ auth, ...props }) => {
     branch: Joi.string()
       .required()
       .label('Branch'),
-    codeNo: Joi.number()
-      .required()
+    codeNo: Joi.string()
       .min(8)
-      .label('Code Number'),
+      .max(8)
+      .label('License Code Number'),
     manager: Joi.optional()
   }
 
@@ -110,6 +110,20 @@ const SignUp = ({ auth, ...props }) => {
 
   const handleCheckUser = async ({ currentTarget: input }) => {
     const { isTaken } = await auth.isUsernameTaken(input.value)
+
+    const _errors = { ...errors }
+
+    if (isTaken) {
+      _errors[input.name] = `"${input.value}" is taken`
+    }
+
+    setErrors(_errors)
+
+    return _errors
+  }
+
+  const handleCheckCodeNo = async ({ currentTarget: input }) => {
+    const { isTaken } = await auth.isCodeNoTaken(input.value)
 
     const _errors = { ...errors }
 
@@ -208,7 +222,7 @@ const SignUp = ({ auth, ...props }) => {
 
                 <div className="col-4 pl-3 pr-2 pt-3">
                   <div className="col-12  d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-4 border-bottom">
-                    <h1 className="h2">Sign Up Agent</h1>
+                    <h1 className="h2">Sign Up New Agent</h1>
                   </div>
 
                   {renderInput('firstname', 'Firstname')}
@@ -222,7 +236,9 @@ const SignUp = ({ auth, ...props }) => {
                     handleChangePosition,
                     agents
                   )}
-                  {renderInput('codeNo', 'Code Number')}
+                  {renderInput('codeNo', 'License Code Number', 'text', '', {
+                    onBlur: handleCheckCodeNo
+                  })}
                   {!hasBranches && <label>No Available Branch</label>}
                   {hasBranches &&
                     renderSelect(

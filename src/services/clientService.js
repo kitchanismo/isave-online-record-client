@@ -28,9 +28,11 @@ export function getClientGPA(id) {
   return http.get('/api/clients/show-gpa/' + id).then(data => data.data)
 }
 
-export function approved(id, codeNo) {
+export function approved(id, client) {
   http.sendJwt(auth.jwt())
-  return http.put('/api/clients/approved/' + id, { codeNo }).then(data => data)
+  return http
+    .put('/api/clients/approved/' + id, { ...client })
+    .then(data => data)
 }
 
 export function getStatistics(year) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Table from '../../common/table'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 import { sortBy, toElipse } from '../../../services/utilsService'
 
@@ -45,15 +45,12 @@ const TableBranch = ({ branches, setBranches, ...props }) => {
       key: 'actions',
       label: 'Action',
       content: branch => (
-        <div className="row pl-1 pt-1 pr-1">
-          <div className="d-flex justify-content-between">
-            <Link to={`/branches/edit/${branch.id}`}>
-              <button className="btn btn-sm btn-outline-warning ml-1">
-                EDIT
-              </button>
-            </Link>
-          </div>
-        </div>
+        <button
+          onClick={() => props.history.replace(`/branches/edit/${branch.id}`)}
+          className="btn btn-sm btn-outline-warning ml-1"
+        >
+          EDIT
+        </button>
       )
     }
   ]

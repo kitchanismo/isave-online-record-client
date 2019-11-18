@@ -11,7 +11,7 @@ const Branch = props => {
   return (
     <React.Fragment>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 className="h2">Branch</h1>
+        <h1 className="h2">Branch Record Management</h1>
         <button
           onClick={() => props.history.replace('/branches/new')}
           className="btn btn-sm btn-grad-primary ml-1"
@@ -22,9 +22,13 @@ const Branch = props => {
       </div>
 
       <div className="row mb-4">
-        <div className="col-12 side-content pt-4">
+        <div className="col-12 side-content pt-2">
           <Spinner isLoaded={isLoaded} className="spinner">
-            <TableBranch branches={branches} setBranches={setBranches} />
+            <TableBranch
+              {...props}
+              branches={branches}
+              setBranches={setBranches}
+            />
           </Spinner>
         </div>
         {/* <div className="col-4 pt-4 pl-0">

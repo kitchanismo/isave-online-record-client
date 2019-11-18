@@ -1,25 +1,26 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect, useRef } from 'react'
 import Table from '../../common/table'
 import useReport from '../../../hooks/useReport'
 import { sortBy } from '../../../services/utilsService'
-import { Link } from 'react-router-dom'
-import { formatDate } from './../../../services/utilsService'
-import { restoreUser } from './../../../services/userService'
+import { NavLink } from 'react-router-dom'
+import { formatDate } from '../../../services/utilsService'
+import { restoreUser } from '../../../services/userService'
 import { ClientContext } from '../../../context'
 import EnforcedModal from '../../common/modalEnforced'
 import ApprovedModal from '../../common/modalApproved'
-import Spinner from './../../common/spinner'
+import Spinner from '../../common/spinner'
 import auth from '../../../services/authService'
-
+import TablePrint from '../../common/tablePrint'
 import CustomModal from '../../common/modal'
 import Select from 'react-select'
+import ReactToPrint from 'react-to-print'
 
 const Reports = props => {
   const [search, setSearch] = useState('')
 
   const [gender, setGender] = useState(null)
 
-  const { name } = props.match.params
+  const { name = '' } = props.match.params
 
   const [sortColumn, setSortColumn] = useState({ path: 'name', order: 'asc' })
 
@@ -56,10 +57,6 @@ const Reports = props => {
 
   const enforcedCol = [
     {
-      path: 'id',
-      label: '#'
-    },
-    {
       path: 'firstname',
       label: 'Fullname',
       content: client =>
@@ -76,7 +73,7 @@ const Reports = props => {
     },
     {
       path: 'codeNo',
-      label: 'Code Number'
+      label: 'Policy #'
     },
     {
       path: 'mode',
@@ -91,23 +88,36 @@ const Reports = props => {
       key: 'actions',
       label: 'Actions',
       content: client => (
-        <div className="row pl-1 pt-1 pr-1">
-          <div className="d-flex justify-content-between">
-            <Link to={`/clients/edit/${client.id}`}>
-              <button className="btn btn-sm btn-outline-warning ml-1">
+        <div>
+          <button
+            onClick={() => props.history.replace(`/clients/show/${client.id}`)}
+            className="btn btn-sm btn-outline-info ml-1"
+          >
+            VIEW
+          </button>
+
+          {!auth.canAccess('promo','admin','general')&& (
+            <React.Fragment>
+              <button
+                onClick={() =>
+                  props.history.replace(`/clients/edit/fs/${client.id}`)
+                }
+                className="btn btn-sm btn-outline-warning ml-1"
+              >
                 EDIT
               </button>
-            </Link>
-            <button
-              onClick={e => {
-                onCancelled(client.id).then(data => setRefresh(r => !r))
-              }}
-              className="btn btn-sm btn-outline-danger ml-1"
-              name="delete"
-            >
-              CANCELLED
-            </button>
-          </div>
+
+              <button
+                onClick={e => {
+                  onCancelled(client.id).then(data => setRefresh(r => !r))
+                }}
+                className="btn btn-sm btn-outline-danger ml-1"
+                name="delete"
+              >
+                CANCELLED
+              </button>
+            </React.Fragment>
+          )}
         </div>
       )
     }
@@ -115,10 +125,6 @@ const Reports = props => {
 
   const forApprovalCol = [
     {
-      path: 'id',
-      label: '#'
-    },
-    {
       path: 'firstname',
       label: 'Fullname',
       content: client =>
@@ -138,36 +144,25 @@ const Reports = props => {
       label: 'Mode'
     },
     {
-      path: 'dateInsured',
-      label: 'Date Insured',
-      content: client => formatDate(client.dateInsured)
-    },
-    {
       key: 'actions',
       label: 'Actions',
       content: client => (
-        <div className="row d-flex-justify-content-center">
-          <button
-            onClick={e => {
-              setClient(client)
-              toggleApproved(e)
-            }}
-            className="btn btn-sm btn-outline-success ml-1"
-            name="delete"
-          >
-            APPROVED
-          </button>
-        </div>
+        <button
+          onClick={e => {
+            setClient(client)
+            toggleApproved(e)
+          }}
+          className="btn btn-sm btn-outline-success"
+          name="delete"
+        >
+          APPROVED
+        </button>
       )
     }
   ]
 
   const lapsedCol = [
     {
-      path: 'id',
-      label: '#'
-    },
-    {
       path: 'firstname',
       label: 'Fullname',
       content: client =>
@@ -201,29 +196,23 @@ const Reports = props => {
       key: 'actions',
       label: 'Actions',
       content: client => (
-        <div className="row pl-1 pt-1 pr-1">
-          <div className="d-flex justify-content-between">
+        
             <button
               onClick={e => {
                 setClient(client)
                 toggleEnforced(e)
               }}
-              className="btn btn-sm btn-outline-success ml-1"
+              className="btn btn-sm btn-outline-success"
               name="delete"
             >
               ENFORCED
             </button>
-          </div>
-        </div>
+        
       )
     }
   ]
 
   const dueCol = [
-    {
-      path: 'id',
-      label: '#'
-    },
     {
       path: 'firstname',
       label: 'Fullname',
@@ -256,6 +245,7 @@ const Reports = props => {
     },
 
     {
+      key: 'notify',
       path: 'isDue',
       label: 'Notify',
       content: client => {
@@ -270,27 +260,23 @@ const Reports = props => {
       key: 'actions',
       label: 'Actions',
       content: client => (
-        <div className="row">
+      
           <button
             onClick={e => {
               setClient(client)
               toggleEnforced(e)
             }}
-            className="btn btn-sm btn-outline-success ml-1"
+            className="btn btn-sm btn-outline-success"
             name="delete"
           >
             ENFORCED
           </button>
-        </div>
+      
       )
     }
   ]
 
   const nearExpirationCol = [
-    {
-      path: 'id',
-      label: '#'
-    },
     {
       path: 'firstname',
       label: 'Fullname',
@@ -321,6 +307,7 @@ const Reports = props => {
       content: client => formatDate(client.expiredDate)
     },
     {
+      key: 'notify',
       path: 'isNear',
       label: 'Notify',
       content: client => {
@@ -334,10 +321,6 @@ const Reports = props => {
   ]
 
   const cancelledCol = [
-    {
-      path: 'id',
-      label: '#'
-    },
     {
       path: 'firstname',
       label: 'Fullname',
@@ -356,7 +339,7 @@ const Reports = props => {
     },
     {
       path: 'codeNo',
-      label: 'Code Number'
+      label: 'Policy #'
     },
     {
       path: 'mode',
@@ -386,10 +369,6 @@ const Reports = props => {
 
   const gpaCol = [
     {
-      path: 'id',
-      label: '#'
-    },
-    {
       path: 'firstname',
       label: 'Fullname',
       content: client =>
@@ -416,18 +395,19 @@ const Reports = props => {
       key: 'actions',
       label: 'Actions',
       content: client => (
-        <Link to={`/dashboard/edit-gpa/${client.id}`}>
-          <button className="btn btn-sm btn-outline-warning ml-1">EDIT</button>
-        </Link>
+        <button
+          onClick={() =>
+            props.history.replace(`/clients/edit/gpa/${client.id}`)
+          }
+          className="btn btn-sm btn-outline-warning ml-1"
+        >
+          EDIT
+        </button>
       )
     }
   ]
 
   const archivedCol = [
-    {
-      path: 'id',
-      label: '#'
-    },
     {
       path: 'username',
       label: 'Username'
@@ -473,6 +453,31 @@ const Reports = props => {
     }
   ]
 
+  const logsCol = [
+    {
+      path: 'user.profile.firstname',
+      label: 'Fullname',
+      content: ({ user }) => {
+        return user
+          ? `${user.profile.firstname}, ${user.profile.lastname} ${user.profile.middlename}`
+          : ''
+      }
+    },
+    {
+      path: 'user.position',
+      label: 'Position'
+    },
+    {
+      path: 'dateTimeIn',
+      label: 'Logged In',
+      content: log => new Date(log.dateTimeIn).toLocaleString()
+    },
+    {
+      path: 'dateTimeOut',
+      label: 'Logged Out',
+      content: log => getLogStatus(log)
+    }
+  ]
   const columns = () => {
     switch (name) {
       case 'enforced':
@@ -491,19 +496,54 @@ const Reports = props => {
         return gpaCol
       case 'user-archived':
         return archivedCol
+      case 'user-logs':
+        return logsCol
       default:
         break
     }
   }
 
+  const getLogStatus = log => {
+    if (log.dateTimeOut) {
+      return new Date(log.dateTimeOut).toLocaleString()
+    }
+
+    const now = new Date(Date.now())
+    const login = new Date(log.dateTimeIn)
+    const days = now.getDate() - login.getDate()
+
+    if (days > 0) {
+      return 'session expired'
+    }
+    return 'active'
+  }
+
+  // const getDuration = dateIn => {
+  //   const now = new Date(Date.now())
+  //   const logIn = new Date(dateIn)
+  //   const hours = now.getHours() - logIn.getHours()
+  //   const minutes = now.getMinutes() - logIn.getMinutes()
+  //   const seconds = now.getSeconds() - logIn.getSeconds()
+
+  //   return `${hours}:${minutes}:${seconds}`
+  // }
+
   const preparedColumns = () => {
-    if (!auth.isPromo() && !auth.isAdmin()) return columns()
+    if (!auth.canAccess('promo','admin','general')) return columns()
 
     const _columns = [...columns()]
+
+    if (name === 'enforced') return _columns
 
     return name === 'user-archived'
       ? archivedCol
       : _columns.filter(c => c.key !== 'actions')
+  }
+
+  const printColums = () => {
+    const _columns = [...preparedColumns()]
+
+    return _columns.filter(c => c.key !== 'notify' && c.key !== 'actions')
   }
 
   const title = () => {
@@ -521,11 +561,13 @@ const Reports = props => {
       case 'near-expiration':
         return 'Near Expiration'
       case 'gpa':
-        return 'GPA'
+        return 'Group Personal Accident'
       case 'user-archived':
-        return 'User Archived'
+        return 'View Archived'
+      case 'user-logs':
+        return 'View Logs'
       default:
-        return 'Reports'
+        return ''
     }
   }
 
@@ -556,10 +598,10 @@ const Reports = props => {
 
   const [modalApproved, setModalApproved] = useState(false)
 
-  const toggleApproved = (e, codeNo) => {
+  const toggleApproved = (e, _client) => {
     setModalApproved(modal => !modal)
     if (e.target && e.target.name === 'primary') {
-      onApproved(client.id, codeNo).then(data => {
+      onApproved(client.id, _client).then(data => {
         setClient(null)
         setRefresh(r => !r)
       })
@@ -569,6 +611,7 @@ const Reports = props => {
   const renderModalApproved = () => {
     return (
       <ApprovedModal
+        client={client}
         title="Cocolife"
         modal={modalApproved}
         toggle={toggleApproved}
@@ -607,7 +650,7 @@ const Reports = props => {
     e.preventDefault()
 
     setSearch(search)
-    props.history.replace('/reports/' + name + '?search=' + search)
+    props.history.replace('/clients/' + name + '?search=' + search)
     setRefresh(r => !r)
   }
 
@@ -626,22 +669,36 @@ const Reports = props => {
 
   const handleChangeGender = gender => setGender(gender)
 
+  const componentRef = useRef()
   return (
     <React.Fragment>
       {client && renderModalEnforced(client)}
       {renderModalApproved()}
       {user && renderModalRestore()}
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 className="h2">{title()}</h1>
+        <span className="m-0 p-0">
+          <h1 className="h2">{`${
+            name.match(/user.*/) ? 'User' : 'Client'
+          } Record Management`}</h1>
+          <h5 className="text-secondary">{title()}</h5>
+        </span>
 
-        {/* <button className="btn btn-sm btn-grad-primary ">
-          <span className="fa fa-print mr-1"></span>
-          PRINT
-        </button> */}
+        {reports.length > 0 && (
+          <ReactToPrint
+            trigger={() => (
+              <button className="btn btn-sm btn-grad-primary ">
+                <span className="fa fa-print mr-1"></span>
+                PRINT PREVIEW
+              </button>
+            )}
+            content={() => componentRef.current}
+          />
+        )}
       </div>
-      {name !== 'user-archived' && (
-        <React.Fragment>
-          {/* <SearchForm
+      {name !== 'user-archived' &&
+        (name !== 'user-logs' && (
+          <React.Fragment>
+            {/* <SearchForm
             handleSearch={handleSearch}
             search={search}
             setSearch={setSearch}
@@ -650,52 +707,52 @@ const Reports = props => {
               setGender(null)
             }}
           /> */}
-          <form onSubmit={e => handleSearch({ e, search })}>
-            <div className="col-6 m-0 p-0">
-              <input
-                type={'text'}
-                name={search}
-                value={search}
-                onChange={e => {
-                  setSearch(e.target.value)
-                }}
-                className="form-control"
-                placeholder="Search here..."
-              />
-            </div>
-            <div className="col-3 m-0 py-0 pl-2">
-              <Select
-                placeholder="Filter gender..."
-                isClearable
-                value={gender}
-                onChange={handleChangeGender}
-                options={genders}
-              />
-            </div>
-            <div className="col-3 m-0 p-0  d-flex justify-content-end">
-              <button className="btn btn-grad-primary ml-2">SEARCH</button>
-              <button
-                onClick={() => {
-                  setSearch('')
-                  setGender(null)
-                }}
-                className="btn btn-grad-secondary ml-2"
-              >
-                REFRESH
-              </button>
-            </div>
-          </form>
-          <style jsx="">{`
-            form {
-              display: flex;
-            }
-            .btn-search {
-              width: 15%;
-            }
-          `}</style>
-          <div className="offset-9 col-3 p-0 mt-2"></div>
-        </React.Fragment>
-      )}
+            <form onSubmit={e => handleSearch({ e, search })}>
+              <div className="col-6 m-0 p-0">
+                <input
+                  type={'text'}
+                  name={search}
+                  value={search}
+                  onChange={e => {
+                    setSearch(e.target.value)
+                  }}
+                  className="form-control"
+                  placeholder="Search here..."
+                />
+              </div>
+              <div className="col-3 m-0 py-0 pl-2">
+                <Select
+                  placeholder="Filter gender..."
+                  isClearable
+                  value={gender}
+                  onChange={handleChangeGender}
+                  options={genders}
+                />
+              </div>
+              <div className="col-3 m-0 p-0  d-flex justify-content-end">
+                <button className="btn btn-grad-primary ml-2">SEARCH</button>
+                <button
+                  onClick={() => {
+                    setSearch('')
+                    setGender(null)
+                  }}
+                  className="btn btn-grad-secondary ml-2"
+                >
+                  REFRESH
+                </button>
+              </div>
+            </form>
+            <style jsx="">{`
+              form {
+                display: flex;
+              }
+              .btn-search {
+                width: 15%;
+              }
+            `}</style>
+            <div className="offset-9 col-3 p-0 mt-2"></div>
+          </React.Fragment>
+        ))}
 
       <div className="wrapper-client mt-2">
         <Spinner isLoaded={isLoaded} className="spinner mt-5 pt-5">
@@ -705,6 +762,14 @@ const Reports = props => {
             sortColumn={sortColumn}
             onSort={handleSort}
           />
+          <div style={{ display: 'none' }}>
+            <TablePrint
+              title={title()}
+              ref={componentRef}
+              columns={printColums()}
+              data={reports}
+            />
+          </div>
         </Spinner>
         {isLoaded && reports.length === 0 && (
           <h6 className="mt-2 mb-5">No records found!</h6>
@@ -712,11 +777,12 @@ const Reports = props => {
       </div>
 
       <style jsx="">{`
-        .fa-print, .fa-check, .fa-close {
+        .fa-print,
+        .fa-check,
+        .fa-close {
           margin-top: 0 !important;
         }
 
-      
         .wrapper-client {
           margin: 0;
           padding: 0;

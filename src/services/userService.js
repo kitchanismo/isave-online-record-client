@@ -124,3 +124,8 @@ export function restoreUser(id) {
   http.sendJwt(auth.jwt())
   return http.get(`/api/users/restore/${id}`).then(data => data.data)
 }
+
+export function getLogs(search) {
+  http.sendJwt(auth.jwt())
+  return http.post(`/api/user-logs`, { search }).then(data => data.data.logs)
+}

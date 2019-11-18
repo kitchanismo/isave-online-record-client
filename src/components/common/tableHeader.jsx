@@ -32,7 +32,7 @@ const TableHeader = props => {
       <tr>
         {props.columns.map((column, i) => (
           <th
-            className="clickable"
+            className="clickable text-center"
             key={i}
             onClick={() => raiseSort(column.path)}
           >

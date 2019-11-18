@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Redirect, Switch } from 'react-router-dom'
+import {Route, Redirect, Switch} from 'react-router-dom'
 
 import Home from './components/home'
 import Login from './components/auth/login'
@@ -10,86 +10,103 @@ import AuthRoute from './components/common/authRoute'
 import GuestRoute from './components/common/guestRoute'
 
 const Routes = props => {
-  return (
-    <Switch>
-      <AuthRoute
-        path="/dashboard/new-fs"
-        render={props => <Home {...props} menu="dashboard" sub="newFs" />}
-      />
-      <AuthRoute
-        path="/dashboard/new-gpa"
-        render={props => <Home {...props} menu="dashboard" sub="newGPA" />}
-      />
-      <AuthRoute
-        path="/dashboard/edit-gpa/:id"
-        render={props => <Home {...props} menu="dashboard" sub="editGPA" />}
-      />
-      <AuthRoute
-        path="/dashboard"
-        render={props => <Home {...props} menu="dashboard" />}
-      />
-      <AuthRoute
-        path="/branches/edit/:id"
-        render={props => <Home {...props} menu="branches" sub="editBranch" />}
-      />
-      <AuthRoute
-        path="/branches/new"
-        render={props => <Home {...props} menu="branches" sub="newBranch" />}
-      />
-      <AuthRoute
-        path="/branches"
-        render={props => <Home {...props} menu="branches" />}
-      />
-      <AuthRoute
-        path="/agents"
-        render={props => <Home {...props} menu="agents" />}
-      />
-      <AuthRoute
-        isAdmin
-        path="/users/new"
-        render={props => <Home {...props} menu="users" sub="newUser" />}
-      />
-      <AuthRoute
-        path="/profile/me"
-        render={props => <Home {...props} menu="profile" sub="me" />}
-      />
-      <AuthRoute
-        path="/profile/edit"
-        render={props => <Home {...props} menu="profile" sub="edit" />}
-      />
-      <AuthRoute
-        isAdminOrManager
-        path="/users/edit/:id"
-        render={props => <Home {...props} menu="users" sub="editUser" />}
-      />
-      <AuthRoute
-        path="/users/:id"
-        render={props => <Home {...props} menu="users" sub="viewUser" />}
-      />
-      <AuthRoute
-        path="/users"
-        isAdminOrManager
-        render={props => <Home {...props} menu="users" />}
-      />
-      <AuthRoute
-        path="/reports/:name"
-        render={props => <Home {...props} menu="reports" />}
-      />
-      <AuthRoute
-        path="/reports"
-        render={props => <Home {...props} menu="reports" />}
-      />
-      <AuthRoute
-        path="/clients/edit/:id"
-        render={props => <Home {...props} menu="clients" />}
-      />
-      <GuestRoute path="/login" render={props => <Login {...props}></Login>} />
-      <GuestRoute path="/sign-up" component={SignUp} />
-      <Route path="/not-found" component={NotFound} />>
-      <Redirect from="/" exact to="/dashboard" />
-      <Redirect to="/not-found" />
-    </Switch>
-  )
+	return (
+		<Switch>
+			<AuthRoute
+				isAdmin
+				path='/settings/backup'
+				render={props => <Home {...props} menu='settings' sub='backup' />}
+			/>
+			<AuthRoute
+				isAdmin
+				path='/settings/restore'
+				render={props => <Home {...props} menu='settings' sub='restore' />}
+			/>
+			<AuthRoute
+				path='/dashboard'
+				render={props => <Home {...props} menu='dashboard' />}
+			/>
+			<AuthRoute
+				path='/branches/edit/:id'
+				render={props => <Home {...props} menu='branches' sub='editBranch' />}
+			/>
+			<AuthRoute
+				path='/branches/new'
+				render={props => <Home {...props} menu='branches' sub='newBranch' />}
+			/>
+			<AuthRoute
+				path='/branches'
+				render={props => <Home {...props} menu='branches' />}
+			/>
+			<AuthRoute
+				path='/agents'
+				render={props => <Home {...props} menu='agents' />}
+			/>
+			<AuthRoute
+				path='/profile/me'
+				render={props => <Home {...props} menu='profile' sub='me' />}
+			/>
+			<AuthRoute
+				path='/profile/edit'
+				render={props => <Home {...props} menu='profile' sub='edit' />}
+			/>
+			<AuthRoute
+				isAdminOrManager
+				path='/users/edit/:id'
+				render={props => <Home {...props} menu='users' sub='editUser' />}
+			/>
+			<AuthRoute
+				isAdminOrManager
+				path='/users/new'
+				render={props => <Home {...props} menu='users' sub='newUser' />}
+			/>
+			<AuthRoute
+				path='/users/show/:id'
+				render={props => <Home {...props} menu='users' sub='viewUser' />}
+			/>
+			<AuthRoute
+				path='/users/:name'
+				render={props => <Home {...props} menu='clients' />}
+			/>
+			<AuthRoute
+				path='/users'
+				isAdminOrManager
+				render={props => <Home {...props} menu='users' />}
+			/>
+			<AuthRoute
+				path='/clients/edit/fs/:id'
+				render={props => <Home {...props} menu='clients' sub='editFs' />}
+			/>
+			<AuthRoute
+				path='/clients/new/fs'
+				render={props => <Home {...props} menu='clients' sub='newFs' />}
+			/>
+			<AuthRoute
+				path='/clients/edit/gpa/:id'
+				render={props => <Home {...props} menu='clients' sub='editGPA' />}
+			/>
+			<AuthRoute
+				path='/clients/new/gpa'
+				render={props => <Home {...props} menu='clients' sub='newGPA' />}
+			/>
+			<AuthRoute
+				path='/clients/show/:id'
+				render={props => <Home {...props} menu='clients' sub='show' />}
+			/>
+			<AuthRoute
+				path='/clients/:name'
+				render={props => <Home {...props} menu='clients' />}
+			/>
+			<AuthRoute
+				path='/clients'
+				render={props => <Home {...props} menu='clients' />}
+			/>
+			<GuestRoute path='/login' render={props => <Login {...props}></Login>} />
+			<Route path='/not-found' component={NotFound} />>
+			<Redirect from='/' exact to='/dashboard' />
+			<Redirect to='/not-found' />
+		</Switch>
+	)
 }
 
 export default Routes

@@ -81,3 +81,28 @@ export const calculateAge = date => {
 }
 
 export const cap = str => _.startCase(str)
+
+const getAddedMonth = mode => {
+  switch (mode) {
+    case 'monthly':
+      return 1
+    case 'quarterly':
+      return 3
+    case 'semi':
+      return 6
+    case 'annually':
+      return 12
+    default:
+      return 0
+  }
+}
+
+export const getExpiredDate = (date, mode) => {
+  const dateInsured = new Date(date)
+
+  const expiredDate = new Date(dateInsured)
+
+  expiredDate.setMonth(dateInsured.getMonth() + getAddedMonth(mode))
+
+  return formatDate(expiredDate)
+}

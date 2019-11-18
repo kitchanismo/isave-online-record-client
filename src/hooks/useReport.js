@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { getClients } from '../services/clientService'
-import { archivedUser } from '../services/userService'
+import { archivedUser, getLogs } from '../services/userService'
 
 export default (name, search, gender) => {
   const [reports, setReports] = useState([])
@@ -15,6 +15,11 @@ export default (name, search, gender) => {
       archivedUser().then(reports => {
         setReports(reports)
 
+        setIsLoaded(true)
+      })
+    } else if (name === 'user-logs') {
+      getLogs(search).then(reports => {
+        setReports(reports)
         setIsLoaded(true)
       })
     } else {

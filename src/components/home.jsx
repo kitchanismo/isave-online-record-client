@@ -35,9 +35,9 @@ const Home = ({menu, sub, ...props}) => {
 				<ClientProvider>
 					{isMobile && <SideMenuMobile {...props}> </SideMenuMobile>}
 
-					<div className='container'>
+					<div className='container-fluid '>
 						<div
-							className='row'
+							className='row mx-2'
 							style={{backgroundColor: 'transparent', minHeight: '800px'}}
 						>
 							{!isMobile && <SideMenu {...props}> </SideMenu>}

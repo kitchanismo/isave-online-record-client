@@ -4,7 +4,7 @@ import {UserContext} from '../../../context'
 import Paginate from '../../common/paginate'
 import CustomModal from '../../common/modal'
 import {verifyUser, getLogs} from '../../../services/userService'
-import {cap} from '../../../services/utilsService'
+import {cap, toElipse} from '../../../services/utilsService'
 import SearchForm from '../../common/searchForm'
 import {pagination} from '../../../config.json'
 import {NavLink} from 'react-router-dom'
@@ -45,8 +45,12 @@ const Users = ({auth, ...props}) => {
 			path: 'profile.lastname',
 			key: 'fullname',
 			label: 'Fullname',
-			content: user =>
-				`${user.profile.firstname}, ${user.profile.middlename} ${user.profile.lastname}`
+			content: user => {
+				return toElipse(
+					`${user.profile.firstname}, ${user.profile.middlename} ${user.profile.lastname}`,
+					25
+				)
+			}
 		},
 
 		{
@@ -83,34 +87,32 @@ const Users = ({auth, ...props}) => {
 			key: 'actions',
 			label: 'Actions',
 			content: user => (
-				<div className='row pl-1 pt-1 pr-1'>
-					<div className='d-flex justify-content-around'>
-						<NavLink to={`/users/show/${user.id}`}>
-							<button className='btn btn-sm btn-outline-primary ml-1'>
-								VIEW
-							</button>
-						</NavLink>
-						<NavLink to={`/users/edit/${user.id}`}>
-							<button className='btn btn-sm btn-outline-warning ml-1'>
-								EDIT
-							</button>
-						</NavLink>
-						<button
-							onClick={e => {
-								if (user.status) {
-									toast.info('Cannot archive user when status is active!')
-									return
-								}
-								setSelectedUser(user)
-								toggleDelete(e).then(data => data)
-							}}
-							className='btn btn-sm btn-outline-danger ml-1'
-							name='delete'
-						>
-							ARCHIVE
+				<span className='d-flex justify-content-around'>
+					<NavLink to={`/users/show/${user.id}`}>
+						<button className='btn btn-sm btn-outline-primary ml-1'>
+							VIEW
 						</button>
-					</div>
-				</div>
+					</NavLink>
+					<NavLink to={`/users/edit/${user.id}`}>
+						<button className='btn btn-sm btn-outline-warning ml-1'>
+							EDIT
+						</button>
+					</NavLink>
+					<button
+						onClick={e => {
+							if (user.status) {
+								toast.info('Cannot archive user when status is active!')
+								return
+							}
+							setSelectedUser(user)
+							toggleDelete(e).then(data => data)
+						}}
+						className='btn btn-sm btn-outline-danger ml-1'
+						name='delete'
+					>
+						ARCHIVE
+					</button>
+				</span>
 			)
 		}
 	]

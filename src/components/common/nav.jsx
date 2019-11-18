@@ -33,7 +33,7 @@ const Nav = props => {
 				<span>View my profile</span>
 			</ReactTooltip>
 			<nav className='navbar navbar-expand-lg navbar-dark bg-dark'>
-				<div className='container'>
+				<div className='container-fluid'>
 					<h6 className='text-white mt-1'>
 						<span>
 							<NavLink style={{color: theme.secondary}} to='/'>

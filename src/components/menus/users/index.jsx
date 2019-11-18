@@ -206,7 +206,7 @@ const Users = ({auth, ...props}) => {
 			<div className='d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom'>
 				<h1 className='h2'>User Record Management</h1>
 				<span>
-					{auth.canAccess('admin', 'general') && (
+					{auth.canAccess('admin', 'general', 'manager') && (
 						<button
 							onClick={() => props.history.replace('/users/new')}
 							className='btn btn-sm btn-grad-primary ml-1'

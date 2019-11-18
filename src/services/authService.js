@@ -10,6 +10,10 @@ async function login(user) {
 	return await http.post('/auth/login', {user}).then(data => {
 		saveJwt(data.data.jwt)
 		localStorage.setItem('log-id', data.data.logId)
+		if (getCurrentUser().position === 'admin')
+			return (window.location.href = window.location.origin + '/profile/me')
+
+		window.location.href = window.location.origin + '/dashboard'
 	})
 }
 

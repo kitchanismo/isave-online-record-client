@@ -25,7 +25,6 @@ const Login = ({auth, ...props}) => {
 	const handleSubmit = async (e, data) => {
 		try {
 			await auth.login(data)
-			props.history.replace('/dashboard')
 		} catch ({response}) {
 			if (response && response.status === 401) {
 				toast.error(response.data.status.errors)

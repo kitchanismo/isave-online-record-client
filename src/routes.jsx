@@ -23,6 +23,7 @@ const Routes = props => {
 				render={props => <Home {...props} menu='settings' sub='restore' />}
 			/>
 			<AuthRoute
+				isNotAdmin
 				path='/dashboard'
 				render={props => <Home {...props} menu='dashboard' />}
 			/>

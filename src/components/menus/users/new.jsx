@@ -105,6 +105,14 @@ const NewManager = ({auth, ...props}) => {
 		}
 	]
 
+	const preparedAgents = () => {
+		if (auth.getCurrentUser().position === 'manager') {
+			return agents.filter(agent => agent.id !== 3)
+		}
+
+		return agents
+	}
+
 	const handleChangePosition = selectedPosition => {
 		setSelectedPosition(selectedPosition)
 		fetchBranches(selectedPosition ? selectedPosition.value : null)
@@ -227,7 +235,7 @@ const NewManager = ({auth, ...props}) => {
 										'Position',
 										selectedPosition,
 										handleChangePosition,
-										agents
+										preparedAgents()
 									)}
 
 									{renderSelect(

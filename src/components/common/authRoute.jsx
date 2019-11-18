@@ -9,6 +9,7 @@ const AuthRoute = ({
 	path,
 	component: Component,
 	render,
+	isNotAdmin,
 	...rest
 }) => {
 	return (
@@ -32,6 +33,9 @@ const AuthRoute = ({
 					return <Redirect to='/not-found' />
 				}
 				if (isAdmin && !auth.canAccess('admin')) {
+					return <Redirect to='/not-found' />
+				}
+				if (isNotAdmin && auth.canAccess('admin')) {
 					return <Redirect to='/not-found' />
 				}
 				return Component ? <Component {...props} /> : render(props)

@@ -43,7 +43,7 @@ const SideMenu = ({auth, ...props}) => {
 				to={`/clients/${name}`}
 			>
 				{label}
-				<span className='badge badge-sm badge-danger ml-2 mt-0'>
+				<span className='client-menu badge badge-sm badge-danger ml-1 mt-0'>
 					{value ? value : ''}
 				</span>
 			</NavLink>
@@ -69,6 +69,24 @@ const SideMenu = ({auth, ...props}) => {
 							>
 								<span className='fa fa-bar-chart mr-2'></span>
 								Dashboard
+							</NavLink>
+						</li>
+					)}
+					{auth.canAccess('admin') && (
+						<li className='nav-item'>
+							<NavLink
+								onClick={() => {
+									setToggleSetting(false)
+									setToggleClient(false)
+									setSettingIsActive(false)
+									setClientIsActive(false)
+								}}
+								name='spif'
+								to='/spif'
+								className={`nav-link text-white`}
+							>
+								<span className='fa fa-trophy mr-2'></span>
+								SPIF
 							</NavLink>
 						</li>
 					)}
@@ -256,9 +274,39 @@ const SideMenu = ({auth, ...props}) => {
 							)}
 						</li>
 					)}
+
+					{!auth.canAccess('promo') && (
+						<li className='nav-item '>
+							<NavLink
+								onClick={() => {
+									setToggleSetting(false)
+									setToggleClient(false)
+									setSettingIsActive(false)
+									setClientIsActive(false)
+								}}
+								name='branch'
+								to='/help'
+								className={`nav-link text-white `}
+							>
+								<span className='fa fa-question mr-2 '></span>
+								Help
+							</NavLink>
+						</li>
+					)}
 				</ul>
 
 				<style jsx=''>{`
+					.client-menu {
+						position: relative;
+						top: -8px;
+					}
+					.dropdown-item.active,
+					.dropdown-item:active {
+						background-color: white;
+					}
+					.fa-question {
+						font-size: 1.3em;
+					}
 					.nav-item {
 						height: 40px !important;
 					}

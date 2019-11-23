@@ -55,8 +55,7 @@ const Login = ({auth, ...props}) => {
 							<div className='card '>
 								<div className='card-body'>
 									<p className='card-text text-white font-italic'>
-										"Infomatech, We're Big on Life. Infomatech, We're Big on
-										Life."
+										"Cocolife, We're Big on Life. Cocolife, We're Big on Life."
 									</p>
 								</div>
 							</div>
@@ -66,7 +65,7 @@ const Login = ({auth, ...props}) => {
 								<div className='card-body'>
 									<p className='card-text text-white font-italic'>
 										"We're Big on Claims and Service too. We're Big on
-										Happiness. We're Big on you Infomatech."
+										Happiness. We're Big on you Cocolife."
 									</p>
 								</div>
 							</div>
@@ -79,7 +78,7 @@ const Login = ({auth, ...props}) => {
 
 	return (
 		<React.Fragment>
-			<div className='container'>
+			<div className='container-fluid'>
 				<div className='row mt-3 mx-0 bg-dark'>
 					<div className='bg-content col-0 col-lg-8 p-0 bg-dark'>
 						<Logo />

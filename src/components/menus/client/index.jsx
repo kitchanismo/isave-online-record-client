@@ -1,21 +1,26 @@
 import React, { useState, useContext, useEffect, useRef } from 'react'
 import Table from '../../common/table'
 import useReport from '../../../hooks/useReport'
-import { sortBy } from '../../../services/utilsService'
-import { NavLink } from 'react-router-dom'
+import { sortBy, cap } from '../../../services/utilsService'
+import auth from './../../../services/authService'
 import { formatDate } from '../../../services/utilsService'
-import { restoreUser } from '../../../services/userService'
+import { restoreUser,getUser } from '../../../services/userService'
 import { ClientContext } from '../../../context'
 import EnforcedModal from '../../common/modalEnforced'
 import ApprovedModal from '../../common/modalApproved'
 import Spinner from '../../common/spinner'
-import auth from '../../../services/authService'
+
 import TablePrint from '../../common/tablePrint'
 import CustomModal from '../../common/modal'
 import Select from 'react-select'
 import ReactToPrint from 'react-to-print'
+import { useMedia } from 'react-use'
+
 
 const Reports = props => {
+
+  const isMobile = useMedia('(max-width: 600px)')
+
   const [search, setSearch] = useState('')
 
   const [gender, setGender] = useState(null)
@@ -30,9 +35,15 @@ const Reports = props => {
     gender ? gender.value : ''
   )
 
+  const [profile,setProfile] =useState({firstname:'',lastname: '', middlename:''})
+
+  
   useEffect(() => {
     setSearch('')
-    //setGender(null)
+    getUser(auth.getCurrentUser().id).then(({profile})=>{
+      setProfile(profile)
+     
+    })
   }, [name])
 
   const [client, setClient] = useState(null)
@@ -90,7 +101,7 @@ const Reports = props => {
       content: client => (
         <div>
           <button
-            onClick={() => props.history.replace(`/clients/show/${client.id}`)}
+            onClick={() => props.history.replace(`/clients/show/fs/${client.id}`)}
             className="btn btn-sm btn-outline-info ml-1"
           >
             VIEW
@@ -109,12 +120,14 @@ const Reports = props => {
 
               <button
                 onClick={e => {
-                  onCancelled(client.id).then(data => setRefresh(r => !r))
+                  
+                  setModalCancelled(!modalCancelled)
+                  setClient(client)
                 }}
                 className="btn btn-sm btn-outline-danger ml-1"
                 name="delete"
               >
-                CANCELLED
+                CANCEL
               </button>
             </React.Fragment>
           )}
@@ -155,7 +168,7 @@ const Reports = props => {
           className="btn btn-sm btn-outline-success"
           name="delete"
         >
-          APPROVED
+          APPROVE
         </button>
       )
     }
@@ -205,7 +218,7 @@ const Reports = props => {
               className="btn btn-sm btn-outline-success"
               name="delete"
             >
-              ENFORCED
+              ENFORCE
             </button>
         
       )
@@ -269,7 +282,7 @@ const Reports = props => {
             className="btn btn-sm btn-outline-success"
             name="delete"
           >
-            ENFORCED
+            ENFORCE
           </button>
       
       )
@@ -361,7 +374,7 @@ const Reports = props => {
           className="btn btn-sm btn-outline-success ml-1"
           name="delete"
         >
-          RETRIEVED
+          RETRIEVE
         </button>
       )
     }
@@ -395,6 +408,14 @@ const Reports = props => {
       key: 'actions',
       label: 'Actions',
       content: client => (
+        <span><button
+        onClick={() =>
+          props.history.replace(`/clients/show/gpa/${client.id}`)
+        }
+        className="btn btn-sm btn-outline-info ml-1"
+      >
+        VIEW
+      </button>
         <button
           onClick={() =>
             props.history.replace(`/clients/edit/gpa/${client.id}`)
@@ -403,6 +424,7 @@ const Reports = props => {
         >
           EDIT
         </button>
+        </span>
       )
     }
   ]
@@ -442,7 +464,7 @@ const Reports = props => {
       content: user => (
         <button
           onClick={e => {
-            setUser(user)
+            setSelectedUser(user)
             setModalRestore(modalRestore => !modalRestore)
           }}
           className="btn btn-sm btn-outline-primary ml-1"
@@ -459,7 +481,7 @@ const Reports = props => {
       label: 'Fullname',
       content: ({ user }) => {
         return user
-          ? `${user.profile.firstname}, ${user.profile.lastname} ${user.profile.middlename}`
+          ? `${user.profile.lastname}, ${user.profile.firstname} ${user.profile.middlename}`
           : ''
       }
     },
@@ -518,15 +540,6 @@ const Reports = props => {
     return 'active'
   }
 
-  // const getDuration = dateIn => {
-  //   const now = new Date(Date.now())
-  //   const logIn = new Date(dateIn)
-  //   const hours = now.getHours() - logIn.getHours()
-  //   const minutes = now.getMinutes() - logIn.getMinutes()
-  //   const seconds = now.getSeconds() - logIn.getSeconds()
-
-  //   return `${hours}:${minutes}:${seconds}`
-  // }
 
   const preparedColumns = () => {
     if (!auth.canAccess('promo','admin','general')) return columns()
@@ -587,7 +600,7 @@ const Reports = props => {
     return (
       <EnforcedModal
         client={client}
-        title="Cocolife"
+        title="Infomatech"
         modal={modalEnforced}
         toggle={toggleEnforced}
         label={`Are you sure to enforce ${client.firstname}?`}
@@ -612,7 +625,7 @@ const Reports = props => {
     return (
       <ApprovedModal
         client={client}
-        title="Cocolife"
+        title="Infomatech"
         modal={modalApproved}
         toggle={toggleApproved}
         primary={{ type: 'primary', label: 'CONFIRM' }}
@@ -622,14 +635,14 @@ const Reports = props => {
 
   const [modalRestore, setModalRestore] = useState(false)
 
-  const [user, setUser] = useState(null)
+  const [selectedUser, setSelectedUser] = useState(null)
 
   const toggleRestore = e => {
     setModalRestore(modalRestore => !modalRestore)
     if (e.target && e.target.name === 'primary') {
-      restoreUser(user.id).then(data => {
+      restoreUser(selectedUser.id).then(data => {
         setRefresh(r => !r)
-        setUser(null)
+        setSelectedUser(null)
       })
     }
   }
@@ -637,11 +650,36 @@ const Reports = props => {
   const renderModalRestore = () => {
     return (
       <CustomModal
-        title="Cocolife"
+        title="Infomatech"
         modal={modalRestore}
         toggle={toggleRestore}
-        label={`Are you sure to restore ${user.username}?`}
+        label={`Are you sure to restore ${selectedUser.username}?`}
         primary={{ type: 'primary', label: 'RESTORE' }}
+      />
+    )
+  }
+
+  const [modalCancelled,setModalCancelled] = useState(false)
+
+  const toggleCancelled = (e)=>{
+    setModalCancelled(!modalCancelled)
+
+    if (e.target.name === 'primary') {
+      if (!client) return
+      
+        onCancelled(client.id).then(data => setRefresh(r => !r))
+    }
+
+  }
+  
+  const renderModalCancelled = () => {
+    return (
+      <CustomModal
+        title="Infomatech"
+        modal={modalCancelled}
+        toggle={toggleCancelled}
+        label={`Are you sure to cancel ${client.firstname}?`}
+        primary={{ type: 'primary', label: 'OK' }}
       />
     )
   }
@@ -674,7 +712,8 @@ const Reports = props => {
     <React.Fragment>
       {client && renderModalEnforced(client)}
       {renderModalApproved()}
-      {user && renderModalRestore()}
+      {selectedUser && renderModalRestore()}
+      {client && renderModalCancelled()}
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <span className="m-0 p-0">
           <h1 className="h2">{`${
@@ -698,17 +737,9 @@ const Reports = props => {
       {name !== 'user-archived' &&
         (name !== 'user-logs' && (
           <React.Fragment>
-            {/* <SearchForm
-            handleSearch={handleSearch}
-            search={search}
-            setSearch={setSearch}
-            onRefresh={() => {
-              setSearch('')
-              setGender(null)
-            }}
-          /> */}
+        
             <form onSubmit={e => handleSearch({ e, search })}>
-              <div className="col-6 m-0 p-0">
+              <div className={isMobile?"col-12 mt-2 p-0":"col-6 m-0 p-0"}>
                 <input
                   type={'text'}
                   name={search}
@@ -720,7 +751,7 @@ const Reports = props => {
                   placeholder="Search here..."
                 />
               </div>
-              <div className="col-3 m-0 py-0 pl-2">
+              <div className={isMobile?"col-12 mt-2 p-0":"col-3 m-0 py-0 pl-2"}>
                 <Select
                   placeholder="Filter gender..."
                   isClearable
@@ -729,14 +760,14 @@ const Reports = props => {
                   options={genders}
                 />
               </div>
-              <div className="col-3 m-0 p-0  d-flex justify-content-end">
-                <button className="btn btn-grad-primary ml-2">SEARCH</button>
+              <div className={isMobile?"col-12 mt-2 p-0":"col-3 m-0 p-0  d-flex justify-content-end"}>
+                <button className={isMobile?"btn btn-grad-primary btn-block":"btn btn-grad-primary ml-2"}>SEARCH</button>
                 <button
                   onClick={() => {
                     setSearch('')
                     setGender(null)
                   }}
-                  className="btn btn-grad-secondary ml-2"
+                  className={isMobile?"btn btn-grad-secondary btn-block":"btn btn-grad-secondary ml-2"}
                 >
                   REFRESH
                 </button>
@@ -744,7 +775,7 @@ const Reports = props => {
             </form>
             <style jsx="">{`
               form {
-                display: flex;
+                display: ${isMobile?'block':'flex'};
               }
               .btn-search {
                 width: 15%;
@@ -762,12 +793,13 @@ const Reports = props => {
             sortColumn={sortColumn}
             onSort={handleSort}
           />
-          <div style={{ display: 'none' }}>
+          <div style={{display: 'none'}}>
             <TablePrint
               title={title()}
               ref={componentRef}
               columns={printColums()}
               data={reports}
+              name={`${profile.lastname}, ${profile.firstname} ${profile.middlename}`}
             />
           </div>
         </Spinner>

@@ -3,9 +3,11 @@ import Chart from 'react-apexcharts'
 import {NavLink} from 'react-router-dom'
 import {theme} from '../../../config.json'
 import useReport from '../../../hooks/useReport'
-import {formatDate} from '../../../services/utilsService'
+import {formatDate, toElipse} from '../../../services/utilsService'
 import {getStatistics} from '../../../services/clientService'
 import Spinner from './../../common/spinner'
+import {getInsentives} from '../../../services/insentiveService.js'
+import {useMedia} from 'react-use'
 
 const useOptions = title => {
 	const [series, setSeries] = useState([
@@ -88,25 +90,34 @@ const useOptions = title => {
 }
 
 const Charts = props => {
+	const isMobile = useMedia('(max-width: 600px)')
+
 	const {reports = [], isLoaded} = useReport('policy-monitoring')
+
+	const [insentives, setInsentives] = useState([])
 
 	const [isLoadedStat, setIsLoadedStat] = useState(false)
 
+	const currentYear = new Date(Date.now()).getFullYear()
+
 	const {options: fspOptions, series: fsp, setSeries: setFSP} = useOptions(
-		'2019 Future Savings Plan Statistic'
+		currentYear +
+			(isMobile ? ' FSP Statistic' : ' Future Savings Plan Statistic')
 	)
 
 	const {options: gpaOptions, series: gpa, setSeries: setGPA} = useOptions(
-		'2019 Group Personal Accident Statistic'
+		currentYear +
+			(isMobile ? ' GPA Statistic' : ' Group Personal Accident Statistic')
 	)
 
 	useEffect(() => {
 		setIsLoadedStat(false)
-		getStatistics().then(data => {
-			setFSP([{name: 'series-1', data: data.fsp}])
-			setGPA([{name: 'series-1', data: data.gpa}])
+		getStatistics(currentYear).then(data => {
+			setFSP([{name: 'count', data: data.fsp}])
+			setGPA([{name: 'count', data: data.gpa}])
 			setIsLoadedStat(true)
 		})
+		getInsentives().then(data => setInsentives(data))
 	}, [])
 
 	const remarksColor = remarks => {
@@ -123,11 +134,19 @@ const Charts = props => {
 		return '/clients/for-approval'
 	}
 
+	const toTrim = str => {
+		return isMobile ? toElipse(str, 15) : str
+	}
+
 	const chart = () => (
 		<React.Fragment>
-			<Spinner isLoaded={isLoaded} className='spinner'>
-				<div className='row d-flex justify-content-around mx-2'>
-					<ul className='list-group'>
+			<Spinner isLoaded={isLoaded && isLoadedStat} className='spinner'>
+				<div
+					className={`row d-flex justify-content-around mx-${
+						isMobile ? '0' : '2'
+					}`}
+				>
+					<ul className={`list-group ${isMobile ? '' : ''}`}>
 						<li className='header-list pb-0 list-group-item d-flex justify-content-between align-items-center'>
 							<span className='font-weight-bold'>Policy Monitoring</span>
 							<span className='badge badge-danger badge-pill'>
@@ -136,7 +155,7 @@ const Charts = props => {
 						</li>
 						<li className='header-list py-1 list-group-item d-flex justify-content-between align-items-center'>
 							<span style={{color: '#eee'}} className='font-weight-light'>
-								Name
+								Client Name
 							</span>
 							<span style={{color: '#eee'}} className='font-weight-light'>
 								Remarks
@@ -150,7 +169,9 @@ const Charts = props => {
 										className='link-policy'
 										to={toView(client.remarks)}
 									>
-										{`${client.lastname}, ${client.firstname} ${client.middlename}`}
+										{toTrim(
+											`${client.lastname}, ${client.firstname} ${client.middlename}`
+										)}
 									</NavLink>
 									<span
 										className={`badge badge-${remarksColor(
@@ -169,46 +190,63 @@ const Charts = props => {
 						</div>
 					</ul>
 
-					<ul className='list-group'>
+					<ul className={`list-group ${isMobile ? 'mt-3' : ''}`}>
 						<li className='header-list pb-0 list-group-item d-flex justify-content-between align-items-center'>
 							<span className='font-weight-bold'>
-								Sales Performance Insentive Fund
+								Sales Performance Incentive Fund
+							</span>
+							<span className='badge badge-danger badge-pill'>
+								{insentives.length ? insentives.length : ''}
 							</span>
 						</li>
 						<li className='header-list py-1 list-group-item d-flex justify-content-between align-items-center'>
 							<span style={{color: '#eee'}} className='font-weight-light'>
-								Name
+								Employee Name
 							</span>
 							<span style={{color: '#eee'}} className='font-weight-light'>
-								Month
+								Prize
 							</span>
 						</li>
-						<li className='list-group-item d-flex justify-content-between align-items-center'>
-							<NavLink title='View details' className='link-policy' to={'/'}>
-								Lname, Fname Mname
-							</NavLink>
-							<span className={`badge badge-info badge-pill`}>November</span>
-						</li>
-						{/* <li className='list-group-item d-flex justify-content-between align-items-center'>
-							No record/s found!
-						</li> */}
+						<div className='wrapper-list'>
+							{insentives.map(insentive => (
+								<li className='list-group-item d-flex justify-content-between align-items-center'>
+									<NavLink
+										title='View details'
+										className='link-policy'
+										to={'/spif/' + insentive.id}
+									>
+										{toTrim(
+											`${insentive.user.profile.lastname}, ${insentive.user.profile.firstname} ${insentive.user.profile.middlename}`
+										)}
+									</NavLink>
+									<span className={`badge badge-info badge-pill`}>
+										₱{insentive.prize}
+									</span>
+								</li>
+							))}
+							{insentives.length === 0 && (
+								<li className='list-group-item d-flex justify-content-between align-items-center'>
+									No record/s found!
+								</li>
+							)}
+						</div>
 					</ul>
 				</div>
 
-				<div className='row d-flex mt-4 justify-content-around'>
+				<div className='row d-flex mt-5 justify-content-around'>
 					<Chart
 						key='Sales'
 						type='line'
 						options={fspOptions}
 						series={fsp}
-						width='410px'
+						width={isMobile ? '285px' : '410px'}
 					/>
 					<Chart
 						key='FSF'
 						type='line'
 						options={gpaOptions}
 						series={gpa}
-						width='410px'
+						width={isMobile ? '285' : '410px'}
 					/>
 				</div>
 			</Spinner>

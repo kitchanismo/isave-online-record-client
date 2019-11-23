@@ -3,12 +3,19 @@ import Joi from 'joi-browser'
 import Form from '../../common/form'
 import {getBranches, addManager} from '../../../services/userService'
 import {toast} from 'react-toastify'
-import {cap, joiLettersOnly} from '../../../services/utilsService'
+import {
+	cap,
+	joiLettersOnly,
+	joiMobileNumber
+} from '../../../services/utilsService'
 import withAuth from './../../hoc/withAuth'
 import Spinner from './../../common/spinner'
 import {UserContext} from './../../../context'
+import {useMedia} from 'react-use'
 
 const NewManager = ({auth, ...props}) => {
+	const isMobile = useMedia('(max-width: 600px)')
+
 	const [user, setUser] = useState({
 		username: '',
 		email: '',
@@ -19,7 +26,8 @@ const NewManager = ({auth, ...props}) => {
 		codeNo: '',
 		branch: '',
 		position: '',
-		confirmPassword: ''
+		confirmPassword: '',
+		contact: ''
 	})
 
 	const {onRefresh} = useContext(UserContext)
@@ -75,6 +83,7 @@ const NewManager = ({auth, ...props}) => {
 		firstname: joiLettersOnly('Firstname'),
 		middlename: joiLettersOnly('Middlename'),
 		lastname: joiLettersOnly('Lastname'),
+		contact: joiMobileNumber('Mobile Contact'),
 		branch: Joi.string()
 			.required()
 			.label('Branch'),
@@ -146,7 +155,8 @@ const NewManager = ({auth, ...props}) => {
 			middlename,
 			lastname,
 			codeNo,
-			position
+			position,
+			contact
 		}
 	) => {
 		const _errors = await handleCheckTaken(e)
@@ -166,6 +176,7 @@ const NewManager = ({auth, ...props}) => {
 				lastname,
 				email,
 				codeNo,
+				contact,
 				branch_id: selectedBranch ? selectedBranch.id : 0
 			}
 		}
@@ -183,6 +194,7 @@ const NewManager = ({auth, ...props}) => {
 				middlename: '',
 				lastname: '',
 				codeNo: '',
+				contact: '',
 				confirmPassword: ''
 			})
 
@@ -222,8 +234,8 @@ const NewManager = ({auth, ...props}) => {
 				{({renderInput, renderSelect, renderButton}) => {
 					return (
 						<React.Fragment>
-							<div className='row mb-3 mx-2'>
-								<div className='col-6 pl-3 pr-2 pt-3'>
+							<div className={isMobile ? 'row mb-3' : 'row mb-3 mx-2'}>
+								<div className={isMobile ? 'col-12' : 'col-6 pl-3 pr-2 pt-3'}>
 									{renderInput('firstname', 'Firstname')}
 									{renderInput('middlename', 'Middlename')}
 									{renderInput('lastname', 'Lastname')}
@@ -249,11 +261,12 @@ const NewManager = ({auth, ...props}) => {
 										}
 									)}
 								</div>
-								<div className='col-6 pl-2 pr-3 pt-3'>
+								<div className={isMobile ? 'col-12' : 'col-6 pl-2 pr-3 pt-3'}>
 									{renderInput('username', 'Username', 'text', 'fa-user', {
 										onBlur: handleCheckTaken
 									})}
 									{renderInput('email', 'Email', 'email', 'fa-envelope')}
+									{renderInput('contact', 'Mobile Contact')}
 									{renderInput('password', 'Password', 'password', 'fa-key')}
 									{renderInput(
 										'confirmPassword',

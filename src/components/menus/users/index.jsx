@@ -59,7 +59,8 @@ const Users = ({auth, ...props}) => {
 		},
 		{
 			path: 'profile.branch.name',
-			label: 'Branch'
+			label: 'Branch',
+			content: user => (user.profile.branch ? user.profile.branch.name : 'All')
 		},
 		{
 			path: 'profile.codeNo',
@@ -73,6 +74,7 @@ const Users = ({auth, ...props}) => {
 			label: 'Status',
 			content: user => (
 				<span
+					title={`click to ${user.status === 1 ? 'deactive' : 'activate'}`}
 					onClick={async e => {
 						setSelectedUser(user)
 						await toggle(e)
@@ -207,7 +209,7 @@ const Users = ({auth, ...props}) => {
 
 			<div className='d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom'>
 				<h1 className='h2'>User Record Management</h1>
-				<span>
+				<span className='mt-0 pt-0'>
 					{auth.canAccess('admin', 'general', 'manager') && (
 						<button
 							onClick={() => props.history.replace('/users/new')}
@@ -222,19 +224,19 @@ const Users = ({auth, ...props}) => {
 							onClick={() => props.history.replace('/users/user-logs')}
 							className='btn btn-sm btn-outline-secondary ml-1'
 						>
-							View Logs
+							<span className='fa fa-eye'></span> Logs
 						</button>
 					)}
 					<button
 						onClick={() => props.history.replace('/users/user-archived')}
 						className='btn btn-sm btn-outline-secondary ml-1'
 					>
-						View Archived
+						<span className='fa fa-eye'></span> Archives
 					</button>
 				</span>
 			</div>
 
-			<div className='col-12'>
+			<div className='col-12 m-0 p-0'>
 				<div className='mb-3'>
 					<SearchForm
 						handleSearch={handleSearch}
@@ -268,7 +270,8 @@ const Users = ({auth, ...props}) => {
 				.spinner {
 					margin-bottom: 200px !important;
 				}
-				.fa-plus {
+				.fa-plus,
+				.fa-eye {
 					margin-top: 0 !important;
 				}
 			`}</style>

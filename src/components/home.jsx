@@ -26,6 +26,10 @@ import ShowClient from './menus/client/show'
 import SideMenuMobile from './mobile/sideMenu'
 
 import {useMedia} from 'react-use'
+import SPIF from './menus/spif/index'
+import NewSPIF from './menus/spif/new'
+import ShowInsentive from './menus/spif/show'
+import Help from './menus/help'
 
 const Home = ({menu, sub, ...props}) => {
 	const isMobile = useMedia('(max-width: 600px)')
@@ -35,7 +39,7 @@ const Home = ({menu, sub, ...props}) => {
 				<ClientProvider>
 					{isMobile && <SideMenuMobile {...props}> </SideMenuMobile>}
 
-					<div className='container-fluid '>
+					<div className={isMobile ? '' : 'container-fluid'}>
 						<div
 							className='row mx-2'
 							style={{backgroundColor: 'transparent', minHeight: '800px'}}
@@ -43,10 +47,19 @@ const Home = ({menu, sub, ...props}) => {
 							{!isMobile && <SideMenu {...props}> </SideMenu>}
 							<main
 								role='main'
-								className='dashboard col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 bg-light border border-secondary'
+								className={`dashboard col-md-9 ml-sm-auto col-lg-10 ${
+									isMobile ? 'pt-2' : 'pt-3'
+								} px-4 bg-light border border-secondary`}
 							>
 								{menu === 'dashboard' && <Dashboard {...props} />}
-
+								{menu === 'spif' && (
+									<React.Fragment>
+										{console.log(sub)}
+										{sub === 'show' && <ShowInsentive {...props} />}
+										{sub === 'new' && <NewSPIF {...props} />}
+										{!sub && <SPIF {...props} />}
+									</React.Fragment>
+								)}
 								{menu === 'profile' && (
 									<React.Fragment>
 										{sub === 'me' && <Me {...props} />}
@@ -64,6 +77,7 @@ const Home = ({menu, sub, ...props}) => {
 								{menu === 'users' && (
 									<React.Fragment>
 										{sub === 'viewUser' && <ViewUser {...props} />}
+
 										{sub === 'editUser' && <EditUser {...props} />}
 										{sub === 'newUser' && <NewUser {...props} />}
 										{!sub && <Users {...props} />}
@@ -75,7 +89,8 @@ const Home = ({menu, sub, ...props}) => {
 										{sub === 'newFs' && <AddFS {...props} />}
 										{sub === 'newGPA' && <AddGPA {...props} />}
 										{sub === 'editGPA' && <EditGPA {...props} />}
-										{sub === 'show' && <ShowClient {...props} />}
+										{sub === 'showFS' && <ShowClient {...props} />}
+										{sub === 'showGPA' && <ShowClient {...props} />}
 										{!sub && <Clients {...props} />}
 									</React.Fragment>
 								)}
@@ -85,6 +100,7 @@ const Home = ({menu, sub, ...props}) => {
 										{sub === 'restore' && <Restore {...props} />}
 									</React.Fragment>
 								)}
+								{menu === 'help' && <Help {...props} />}
 							</main>
 
 							<Footer></Footer>
@@ -94,7 +110,8 @@ const Home = ({menu, sub, ...props}) => {
 			</UserProvider>
 
 			<style jsx=''>{`
-				.dashboard {
+				.dashboard,
+				.side-menu {
 					border-radius: 5px px 0 0;
 				}
 			`}</style>

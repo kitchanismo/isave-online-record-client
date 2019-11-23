@@ -13,9 +13,12 @@ import auth from '../../../services/authService'
 import {ClientContext} from '../../../context'
 import Help from './../../common/help'
 import ReactTooltip from 'react-tooltip'
+import {useMedia} from 'react-use'
 
 const AddGPA = props => {
 	const {onAddClient} = useContext(ClientContext)
+
+	const isMobile = useMedia('(max-width: 600px)')
 
 	const [client, setClient] = useState({
 		firstname: '',
@@ -177,9 +180,7 @@ const AddGPA = props => {
 					<h1 className='h2'>Client Record Management</h1>
 					<h5 className='text-secondary'>Add New Group Personal Accident</h5>
 				</span>
-				<a data-tip='Fill up all the necessary informations.'>
-					<Help />
-				</a>
+
 				<ReactTooltip type='info' effect='float' />
 			</div>
 
@@ -192,12 +193,16 @@ const AddGPA = props => {
 				{({renderInput, renderSelect, renderTextArea, renderDatePicker}) => {
 					return (
 						<div className='row'>
-							<div className='col-6'>
+							<div className={isMobile ? 'col-12' : 'col-6'}>
 								{renderInput('firstname', 'Firstname')}
 								{renderInput('middlename', 'Middlename')}
 								{renderInput('lastname', 'Lastname')}
 								<div className='row m-0 p-0'>
-									<div className='col-6 m-0 py-0 pl-0 pr-2'>
+									<div
+										className={
+											isMobile ? 'col-12 px-0' : 'col-6 m-0 py-0 pl-0 pr-2'
+										}
+									>
 										{renderSelect(
 											'gender',
 											'Gender',
@@ -206,7 +211,11 @@ const AddGPA = props => {
 											genders
 										)}
 									</div>
-									<div className='col-6 m-0 py-0 pr-0 pl-2'>
+									<div
+										className={
+											isMobile ? 'col-12 px-0' : 'col-6 m-0 py-0 pr-0 pl-2'
+										}
+									>
 										{renderSelect(
 											'civil',
 											'Civil Status',
@@ -223,7 +232,7 @@ const AddGPA = props => {
 								{renderTextArea('address', 'Address')}
 							</div>
 
-							<div className='col-6'>
+							<div className={isMobile ? 'col-12' : 'col-6'}>
 								{renderDatePicker('dateInsured', 'Date Insured', {
 									onChange: handleDateInsured
 								})}

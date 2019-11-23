@@ -1,15 +1,17 @@
 import React, {useState, useEffect} from 'react'
 import {toast} from 'react-toastify'
-import {onBackup, getFiles, getSql} from './../../../services/databaseService'
-import Help from './../../common/help'
-import Spinner from './../../common/spinner'
+import {onBackup, getFiles, getSql} from '../../../services/databaseService'
+import Help from '../../common/help'
+import Spinner from '../../common/spinner'
 import {theme} from '../../../config.json'
 import ReactTooltip from 'react-tooltip'
 
 import _ from 'lodash'
+import {useMedia} from 'react-use'
 
 const Backup = () => {
 	const [file, setFile] = useState('')
+	const isMobile = useMedia('(max-width: 600px)')
 	const [isBackedUp, setIsBackedUp] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [isLoadedFiles, setIsLoadedFiles] = useState(false)
@@ -77,13 +79,17 @@ const Backup = () => {
 		return files.map(file => (
 			<li
 				key={file.date}
-				className='list-group-item d-flex justify-content-between align-items-center'
+				className={
+					isMobile
+						? 'list-group-item text-center'
+						: 'list-group-item d-flex justify-content-center align-items-center'
+				}
 			>
 				<a className='text-secondary'>{file.name}</a>
 				<button
 					disabled={isLoading}
 					onClick={() => handleDownload(file.name)}
-					className='btn btn-outline-info btn-sm ml-5'
+					className='btn btn-outline-info btn-sm ml-5 '
 				>
 					<span className='fa fa-download '></span> Download
 				</button>
@@ -93,15 +99,19 @@ const Backup = () => {
 
 	return (
 		<React.Fragment>
+			<ReactTooltip id='backup' type='info' effect='float'>
+				<span>How to backup the database?</span>
+				<ul className='ml-4 mt-2'>
+					<li>Name the filename</li>
+					<li>Click Backup</li>
+					<li>Click Download</li>
+				</ul>
+			</ReactTooltip>
 			<div className='d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom'>
 				<h1 className='h2'>Backup Database</h1>
-				<a data-tip='Create a backup to a server and download a database(.sql) file.'>
-					<Help />
-				</a>
-				<ReactTooltip type='info' effect='float' />
 			</div>
 			<div className='row m-0 p-0'>
-				<div className='col-6 pr-2 m-0'>
+				<div className={isMobile ? 'col-12 p-0' : 'col-6 pr-2 m-0'}>
 					<ul className='list-group mb-3 mt-2'>
 						{isLoading && <p className='text-secondary'> Please wait...</p>}
 						<li className='header-list  list-group-item d-flex justify-content-between align-items-center'>
@@ -121,7 +131,7 @@ const Backup = () => {
 						</Spinner>
 					</ul>
 				</div>
-				<div className='col-6 pl-2 m-0'>
+				<div className={isMobile ? 'col-12 p-0' : 'col-6 pl-2 m-0'}>
 					<form onSubmit={handleBackup}>
 						<div className='form-group'>
 							<label htmlFor='file'>Filename</label>
@@ -182,7 +192,7 @@ const Backup = () => {
         .wrapper-list {
           margin: 0;
           padding: 0;
-          height: 400px;
+          height: 200px;
           overflow-x: hidden;
           overflow-y: auto;
         }

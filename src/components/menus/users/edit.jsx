@@ -7,16 +7,25 @@ import {
 	editUser
 } from '../../../services/userService'
 import {toast} from 'react-toastify'
-import {cap, joiLettersOnly} from '../../../services/utilsService'
+import {
+	cap,
+	joiLettersOnly,
+	joiMobileNumber
+} from '../../../services/utilsService'
 import withAuth from '../../hoc/withAuth'
 import Form from './../../common/form'
 import Spinner from './../../common/spinner'
 
 import {UserContext} from './../../../context'
+import {useMedia} from 'react-use'
 
 const EditUser = ({auth, ...props}) => {
+	const isMobile = useMedia('(max-width: 600px)')
+
 	const {onRefresh} = useContext(UserContext)
+
 	const {id} = props.match.params
+
 	const [user, setUser] = useState({
 		username: '',
 		email: '',
@@ -27,7 +36,8 @@ const EditUser = ({auth, ...props}) => {
 		codeNo: '',
 		position: '',
 		branch: '',
-		password: ''
+		password: '',
+		contact: ''
 	})
 	const [isLoaded, setIsLoaded] = useState(false)
 
@@ -43,7 +53,8 @@ const EditUser = ({auth, ...props}) => {
 				codeNo: '' + profile.codeNo,
 				manager: profile.branch ? profile.branch.manager : '',
 				branch: profile.branch ? profile.branch.name : '',
-				position
+				position,
+				contact: profile.contact
 			})
 			setSelectedPosition({
 				id: position === 'sales' ? 1 : 2,
@@ -110,6 +121,7 @@ const EditUser = ({auth, ...props}) => {
 		firstname: joiLettersOnly('Firstname'),
 		middlename: joiLettersOnly('Middlename'),
 		lastname: joiLettersOnly('Lastname'),
+		contact: joiMobileNumber('Mobile Contact'),
 		position: Joi.string()
 			.required()
 			.label('Position'),
@@ -119,7 +131,7 @@ const EditUser = ({auth, ...props}) => {
 		codeNo: Joi.string()
 			.min(8)
 			.max(8)
-			.label('License Code Number')
+			.label('License Code')
 	}
 
 	const handleChangePosition = selectedPosition =>
@@ -145,7 +157,8 @@ const EditUser = ({auth, ...props}) => {
 			middlename,
 			lastname,
 			position,
-			codeNo
+			codeNo,
+			contact
 		}
 	) => {
 		const user = {
@@ -158,6 +171,7 @@ const EditUser = ({auth, ...props}) => {
 				lastname,
 				email,
 				codeNo,
+				contact,
 				branch_id: selectedBranch ? selectedBranch.id : null
 			}
 		}
@@ -187,7 +201,7 @@ const EditUser = ({auth, ...props}) => {
 		<React.Fragment>
 			<div className='d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom'>
 				<span>
-					<h1 className='h2'>User Record Management</h1>
+					<h3>User Record Management</h3>
 					<h5 className='text-secondary'>Edit User</h5>
 				</span>
 			</div>
@@ -202,8 +216,8 @@ const EditUser = ({auth, ...props}) => {
 					{({renderInput, renderSelect, renderButton}) => {
 						return (
 							<React.Fragment>
-								<div className='row m-1'>
-									<div className='col-6 pl-5 pr-3 pt-4'>
+								<div className='row'>
+									<div className={isMobile ? 'col-12' : 'col-6 pl-5 pr-3 pt-4'}>
 										{renderInput('firstname', 'Firstname')}
 										{renderInput('middlename', 'Middlename')}
 										{renderInput('lastname', 'Lastname')}
@@ -237,9 +251,10 @@ const EditUser = ({auth, ...props}) => {
 												disabled: true
 											})}
 									</div>
-									<div className='col-6 pl-3 pr-5 pt-4'>
+									<div className={isMobile ? 'col-12' : 'col-6 pl-3 pr-5 pt-4'}>
 										{renderInput('username', 'Username', 'text', 'fa-user')}
 										{renderInput('email', 'Email', 'email', 'fa-envelope')}
+										{renderInput('contact', 'Mobile Contact')}
 										{auth.canAccess('admin') &&
 											renderInput(
 												'password',
@@ -254,7 +269,7 @@ const EditUser = ({auth, ...props}) => {
 												e.preventDefault()
 												props.history.replace('/users')
 											}}
-											className='btn btn-grad-secondary btn-block'
+											className='btn btn-grad-secondary btn-block mb-2'
 											name='back'
 										>
 											Back

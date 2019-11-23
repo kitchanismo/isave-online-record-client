@@ -13,9 +13,27 @@ const Routes = props => {
 	return (
 		<Switch>
 			<AuthRoute
+				path='/help'
+				render={props => <Home {...props} menu='help' />}
+			/>
+			<AuthRoute
 				isAdmin
 				path='/settings/backup'
 				render={props => <Home {...props} menu='settings' sub='backup' />}
+			/>
+			<AuthRoute
+				isAdmin
+				path='/spif/new'
+				render={props => <Home {...props} menu='spif' sub='new' />}
+			/>
+			<AuthRoute
+				path='/spif/:id'
+				render={props => <Home {...props} menu='spif' sub='show' />}
+			/>
+			<AuthRoute
+				isAdmin
+				path='/spif'
+				render={props => <Home {...props} menu='spif' />}
 			/>
 			<AuthRoute
 				isAdmin
@@ -91,8 +109,12 @@ const Routes = props => {
 				render={props => <Home {...props} menu='clients' sub='newGPA' />}
 			/>
 			<AuthRoute
-				path='/clients/show/:id'
-				render={props => <Home {...props} menu='clients' sub='show' />}
+				path='/clients/show/fs/:id'
+				render={props => <Home {...props} menu='clients' sub='showFS' />}
+			/>
+			<AuthRoute
+				path='/clients/show/gpa/:id'
+				render={props => <Home {...props} menu='clients' sub='showGPA' />}
 			/>
 			<AuthRoute
 				path='/clients/:name'

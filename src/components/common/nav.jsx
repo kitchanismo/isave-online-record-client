@@ -1,14 +1,13 @@
 import React from 'react'
 import {NavLink} from 'react-router-dom'
-import auth from '../../services/authService'
+import auth from './../../services/authService'
 import {cap} from '../../services/utilsService'
 import {theme} from '../../config.json'
 import ReactTooltip from 'react-tooltip'
+import {useMedia} from 'react-use'
 
 const Nav = props => {
-	const handleLogout = () => {
-		auth.logout()
-	}
+	const isMobile = useMedia('(max-width: 600px)')
 
 	const labelPosition = position => {
 		switch (position) {
@@ -33,18 +32,26 @@ const Nav = props => {
 				<span>View my profile</span>
 			</ReactTooltip>
 			<nav className='navbar navbar-expand-lg navbar-dark bg-dark'>
-				<div className='container-fluid'>
+				<div
+					className={`container-fluid ${
+						isMobile ? 'd-flex justify-content-center mt-2' : ''
+					}`}
+				>
 					<h6 className='text-white mt-1'>
 						<span>
 							<NavLink style={{color: theme.secondary}} to='/'>
 								INFOMATECH &nbsp;
 							</NavLink>
 						</span>
-						: Hybrid Management Information System with SMS Notification
+						{isMobile
+							? ''
+							: ': Hybrid Management Information System with SMS Notification'}
 					</h6>
 
 					<div
-						className='collapse navbar-collapse d-flex justify-content-end'
+						className={`collapse navbar-collapse d-flex justify-content-${
+							isMobile ? 'center' : 'end'
+						}`}
 						id='navbarNav'
 					>
 						<ul className='navbar-nav'>
@@ -64,15 +71,6 @@ const Nav = props => {
 												labelPosition(auth.getCurrentUser().position)}
 										</NavLink>
 									</li>
-									{/* <li className="nav-item">
-                    <a
-                      href="/login"
-                      className="nav-link"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </a>
-                  </li> */}
 								</React.Fragment>
 							)}
 						</ul>
@@ -93,6 +91,11 @@ const Nav = props => {
 					i {
 						cursor: pointer;
 					}
+					// .navbar {
+					// 	position: fixed !important;
+					// 	z-index: 2;
+					// 	width: 100% !important;
+					// }
 				`}</style>
 			</nav>
 		</React.Fragment>

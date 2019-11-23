@@ -205,6 +205,19 @@ const Reports = props => {
       label: 'Due Date',
       content: client => formatDate(client.expiredDate)
     },
+    
+    {
+      key: 'notify',
+      path: 'isLapsed',
+      label: 'Notify',
+      content: client => {
+        return client.isLapsed === 1 ? (
+          <span className="fa fa-check text-info" />
+        ) : (
+          <span className="fa fa-close text-danger" />
+        )
+      }
+    },
     {
       key: 'actions',
       label: 'Actions',

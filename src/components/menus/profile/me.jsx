@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {getMe} from './../../../services/userService'
-import {cap} from '../../../services/utilsService'
+import {cap, labelPosition} from '../../../services/utilsService'
 import {appUrl} from '../../../config.json'
 import Spinner from '../../common/spinner'
 import auth from '../../../services/authService'
@@ -31,7 +31,7 @@ const Me = props => {
 		return (
 			user.position !== 'manager' &&
 			user.position !== 'admin' &&
-			user.position !== 'super'
+			user.position !== 'general'
 		)
 	}
 	return (
@@ -114,7 +114,9 @@ const Me = props => {
 								<br></br>
 								<p className='card-subtitle'>
 									Position:{'   '}
-									<span className='text-secondary'>{cap(user.position)}</span>
+									<span className='text-secondary'>
+										{labelPosition(user.position)}
+									</span>
 								</p>
 								<br></br>
 								<p className='card-subtitle'>

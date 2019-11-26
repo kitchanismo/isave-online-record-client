@@ -103,7 +103,7 @@ const SideMenu = ({auth, ...props}) => {
 								to='/branches'
 								className={`nav-link text-white`}
 							>
-								<span className='fa fa-home mr-2'></span>
+								<span className='fa fa-building mr-2'></span>
 								Branch
 							</NavLink>
 						</li>
@@ -259,18 +259,30 @@ const SideMenu = ({auth, ...props}) => {
 							</div>
 
 							{toggleSetting && (
-								<div className='dropdown'>
-									<NavLink
-										onClick={() => {
-											setToggleSetting(false)
-											setSettingIsActive(true)
-										}}
-										className='dropdown-item'
-										to={`/settings/backup`}
-									>
-										Backup Database
-									</NavLink>
-								</div>
+								<React.Fragment>
+									<div className='dropdown'>
+										<NavLink
+											onClick={() => {
+												setToggleSetting(false)
+												setSettingIsActive(true)
+											}}
+											className='dropdown-item'
+											to={`/settings/backup`}
+										>
+											Backup Database
+										</NavLink>
+										<NavLink
+											onClick={() => {
+												setToggleSetting(false)
+												setSettingIsActive(true)
+											}}
+											className='dropdown-item'
+											to={`/settings/sms`}
+										>
+											SMS Notification
+										</NavLink>
+									</div>
+								</React.Fragment>
 							)}
 						</li>
 					)}

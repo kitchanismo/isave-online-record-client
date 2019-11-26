@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react'
 import Joi from 'joi-browser'
 import Form from '../../common/form'
-import {getBranches, addManager} from '../../../services/userService'
+import {getBranches, addManager, getUser} from '../../../services/userService'
 import {toast} from 'react-toastify'
 import {
 	cap,
@@ -47,6 +47,7 @@ const NewManager = ({auth, ...props}) => {
 			setHasBranches(false)
 			return
 		}
+
 		setIsLoading(true)
 		const url = position === 'manager' ? 'available' : 'taken'
 		getBranches(`/api/branches/${url}`).then(branches => {
@@ -61,6 +62,16 @@ const NewManager = ({auth, ...props}) => {
 	useEffect(() => {
 		setBranches([])
 		setHasBranches(false)
+		if (auth.getCurrentUser().position === 'manager') {
+			getUser(auth.getCurrentUser().id).then(_user => {
+				setUser({...user, branch: _user.profile.branch.name})
+				setSelectedBranch({
+					id: 1,
+					label: cap(_user.profile.branch.name),
+					value: _user.profile.branch.name
+				})
+			})
+		}
 	}, [])
 
 	const schema = {
@@ -124,6 +135,8 @@ const NewManager = ({auth, ...props}) => {
 
 	const handleChangePosition = selectedPosition => {
 		setSelectedPosition(selectedPosition)
+		if (auth.getCurrentUser().position === 'manager') return
+
 		fetchBranches(selectedPosition ? selectedPosition.value : null)
 		setSelectedBranch(null)
 	}
@@ -257,7 +270,8 @@ const NewManager = ({auth, ...props}) => {
 										handleChangeBranch,
 										branches,
 										{
-											isLoading
+											isLoading,
+											isDisabled: auth.getCurrentUser().position === 'manager'
 										}
 									)}
 								</div>

@@ -243,7 +243,11 @@ const EditUser = ({auth, ...props}) => {
 												'Branch',
 												selectedBranch,
 												handleChangeBranch,
-												branches
+												branches,
+												{
+													isDisabled:
+														auth.getCurrentUser().position === 'manager'
+												}
 											)}
 
 										{isAgent() &&

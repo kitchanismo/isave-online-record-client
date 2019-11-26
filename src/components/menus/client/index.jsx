@@ -831,7 +831,7 @@ const Reports = props => {
         .wrapper-client {
           margin: 0;
           padding: 0;
-          height: 550px;
+          height: ${isMobile?'auto':'550px'};
           overflow-x: hidden;
           overflow-y: auto;
         }

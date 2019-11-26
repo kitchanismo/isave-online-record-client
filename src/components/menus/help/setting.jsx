@@ -18,11 +18,18 @@ const SettingHelp = ({instruction}) => {
 				>
 					<hr></hr>
 					{instruction({
-						question: 'How to backup the database??',
+						question: 'How to backup the database?',
 						steps: [
 							'Name the filename.',
 							'Click "Backup" button',
 							'Click Download button to save the sql file.'
+						]
+					})}
+					{instruction({
+						question: 'SMS Notification Setting',
+						steps: [
+							'Toggle the switch to on and off the sms.',
+							'Code is used to send a message to sms service(itexmo)'
 						]
 					})}
 				</div>

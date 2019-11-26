@@ -37,6 +37,7 @@ export default {
 }
 
 function throwError(error) {
+	toast.dismiss()
 	if (
 		error.response &&
 		error.response.data.status &&
@@ -54,8 +55,11 @@ function throwError(error) {
 		error.response.status >= 400 &&
 		error.response.status < 500
 	if (!expectedError) {
-		toast.error('An unexpected error occurrred.')
-		console.log(error.message)
+		if (error.message === 'Network Error') {
+			toast.error('Connection failed!')
+		} else {
+			toast.error('Server failed!')
+		}
 	}
 
 	return Promise.reject(error)

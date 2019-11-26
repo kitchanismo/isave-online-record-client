@@ -88,6 +88,7 @@ const SPIF = props => {
 			content: insentive => `${insentive.month}, ${insentive.year}`
 		},
 		{
+			key: 'actions',
 			path: 'count',
 			label: 'Actions',
 			content: insentive => (

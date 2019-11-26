@@ -17,6 +17,10 @@ const Routes = props => {
 				render={props => <Home {...props} menu='help' />}
 			/>
 			<AuthRoute
+				path='/settings/sms'
+				render={props => <Home {...props} menu='settings' sub='sms' />}
+			/>
+			<AuthRoute
 				isAdmin
 				path='/settings/backup'
 				render={props => <Home {...props} menu='settings' sub='backup' />}

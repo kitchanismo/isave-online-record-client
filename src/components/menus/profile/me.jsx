@@ -120,7 +120,9 @@ const Me = props => {
 								<p className='card-subtitle'>
 									Branch:{'   '}
 									<span className='text-secondary'>
-										{cap(user.profile.branch ? user.profile.branch.name : '')}
+										{cap(
+											user.profile.branch ? user.profile.branch.name : 'All'
+										)}
 									</span>
 								</p>
 								<br></br>

@@ -516,8 +516,8 @@ const Reports = props => {
     {
       path: 'user.position',
       label: 'Position',
-content: user=>cap(user.position)
-    },
+      content: log=>labelPosition(log.user.position)
+    },ok
     {
       path: 'dateTimeIn',
       label: 'Logged In',

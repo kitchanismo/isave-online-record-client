@@ -1,6 +1,11 @@
 import React, {useState, useEffect} from 'react'
 import Table from '../../common/table'
-import {toElipse, sortBy, cap} from '../../../services/utilsService'
+import {
+	toElipse,
+	sortBy,
+	cap,
+	labelPosition
+} from '../../../services/utilsService'
 import {
 	getInsentives,
 	deleteInsentive
@@ -70,7 +75,7 @@ const SPIF = props => {
 		{
 			path: 'user.position',
 			label: 'Position',
-			content: incentive => cap(incentive.user.position)
+			content: incentive => labelPosition(incentive.user.position)
 		},
 		{
 			path: 'user.profile.codeNo',

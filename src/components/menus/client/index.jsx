@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useRef } from 'react'
 import Table from '../../common/table'
 import useReport from '../../../hooks/useReport'
-import { sortBy, cap } from '../../../services/utilsService'
+import { sortBy, cap, labelPosition } from '../../../services/utilsService'
 import auth from './../../../services/authService'
 import { formatDate } from '../../../services/utilsService'
 import { restoreUser,getUser } from '../../../services/userService'
@@ -473,7 +473,7 @@ const Reports = props => {
     {
       path: 'position',
       label: 'Position',
-      content: user=>cap(user.position)
+      content: user=>labelPosition(user.position)
     },
     {
       path: 'profile.branch.name',

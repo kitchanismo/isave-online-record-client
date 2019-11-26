@@ -4,7 +4,7 @@ import {UserContext} from '../../../context'
 import Paginate from '../../common/paginate'
 import CustomModal from '../../common/modal'
 import {verifyUser, getLogs} from '../../../services/userService'
-import {cap, toElipse} from '../../../services/utilsService'
+import {cap, toElipse, labelPosition} from '../../../services/utilsService'
 import SearchForm from '../../common/searchForm'
 import {pagination} from '../../../config.json'
 import {NavLink} from 'react-router-dom'
@@ -47,7 +47,9 @@ const Users = ({auth, ...props}) => {
 			label: 'Fullname',
 			content: user => {
 				return toElipse(
-					`${user.profile.firstname}, ${user.profile.middlename} ${user.profile.lastname}`,
+					`${cap(user.profile.firstname)}, ${cap(
+						user.profile.middlename
+					)} ${cap(user.profile.lastname)}`,
 					25
 				)
 			}
@@ -55,12 +57,14 @@ const Users = ({auth, ...props}) => {
 
 		{
 			path: 'position',
-			label: 'Position'
+			label: 'Position',
+			content: user => labelPosition(user.position)
 		},
 		{
 			path: 'profile.branch.name',
 			label: 'Branch',
-			content: user => (user.profile.branch ? user.profile.branch.name : 'All')
+			content: user =>
+				user.profile.branch ? cap(user.profile.branch.name) : 'All'
 		},
 		{
 			path: 'profile.codeNo',

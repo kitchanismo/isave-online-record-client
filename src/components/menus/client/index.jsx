@@ -71,7 +71,7 @@ const Reports = props => {
       path: 'firstname',
       label: 'Fullname',
       content: client =>
-        `${client.firstname}, ${client.lastname} ${client.middlename}`
+        `${cap(client.firstname)}, ${cap(client.lastname)} ${cap(client.middlename)}`
     },
     {
       path: 'birthdate',
@@ -80,7 +80,8 @@ const Reports = props => {
     },
     {
       path: 'gender',
-      label: 'Gender'
+      label: 'Gender',
+      content: client=>cap(client.gender)
     },
     {
       path: 'codeNo',
@@ -88,7 +89,8 @@ const Reports = props => {
     },
     {
       path: 'mode',
-      label: 'Mode'
+      label: 'Mode',
+      content:client=>cap(client.mode)
     },
     {
       path: 'dateInsured',
@@ -141,7 +143,7 @@ const Reports = props => {
       path: 'firstname',
       label: 'Fullname',
       content: client =>
-        `${client.firstname}, ${client.lastname} ${client.middlename}`
+        `${cap(client.firstname)}, ${cap(client.lastname)} ${cap(client.middlename)}`
     },
     {
       path: 'birthdate',
@@ -150,11 +152,13 @@ const Reports = props => {
     },
     {
       path: 'gender',
-      label: 'Gender'
+      label: 'Gender',
+      content: client=>cap(client.gender)
     },
     {
       path: 'mode',
-      label: 'Mode'
+      label: 'Mode',
+      content: client=>cap(client.mode)
     },
     {
       key: 'actions',
@@ -179,7 +183,7 @@ const Reports = props => {
       path: 'firstname',
       label: 'Fullname',
       content: client =>
-        `${client.firstname}, ${client.lastname} ${client.middlename}`
+        `${cap(client.firstname)}, ${cap(client.lastname)} ${cap(client.middlename)}`
     },
     {
       path: 'birthdate',
@@ -189,11 +193,13 @@ const Reports = props => {
 
     {
       path: 'gender',
-      label: 'Gender'
+      label: 'Gender',
+      content:  client=>cap(client.gender)
     },
     {
       path: 'mode',
-      label: 'Mode'
+      label: 'Mode',
+      content: client=>cap(client.mode)
     },
     {
       path: 'dateInsured',
@@ -243,7 +249,7 @@ const Reports = props => {
       path: 'firstname',
       label: 'Fullname',
       content: client =>
-        `${client.firstname}, ${client.lastname} ${client.middlename}`
+        `${cap(client.firstname)}, ${cap(client.lastname)} ${cap(client.middlename)}`
     },
     {
       path: 'birthdate',
@@ -253,11 +259,13 @@ const Reports = props => {
 
     {
       path: 'gender',
-      label: 'Gender'
+      label: 'Gender',
+      content: client=>cap(client.gender)
     },
     {
       path: 'mode',
-      label: 'Mode'
+      label: 'Mode',
+      content: client=>cap(client.mode)
     },
     {
       path: 'dateInsured',
@@ -307,7 +315,7 @@ const Reports = props => {
       path: 'firstname',
       label: 'Fullname',
       content: client =>
-        `${client.firstname}, ${client.lastname} ${client.middlename}`
+        `${cap(client.firstname)}, ${cap(client.lastname)} ${cap(client.middlename)}`
     },
     {
       path: 'birthdate',
@@ -316,11 +324,13 @@ const Reports = props => {
     },
     {
       path: 'gender',
-      label: 'Gender'
+      label: 'Gender',
+      content: client=>cap(client.gender)
     },
     {
       path: 'mode',
-      label: 'Mode'
+      label: 'Mode',
+      content: client=>cap(client.mode)
     },
     {
       path: 'dateInsured',
@@ -351,7 +361,7 @@ const Reports = props => {
       path: 'firstname',
       label: 'Fullname',
       content: client =>
-        `${client.firstname}, ${client.lastname} ${client.middlename}`
+        `${cap(client.firstname)}, ${cap(client.lastname)} ${cap(client.middlename)}`
     },
 
     {
@@ -361,7 +371,8 @@ const Reports = props => {
     },
     {
       path: 'gender',
-      label: 'Gender'
+      label: 'Gender',
+      content: client=>cap(client.gender)
     },
     {
       path: 'codeNo',
@@ -369,7 +380,8 @@ const Reports = props => {
     },
     {
       path: 'mode',
-      label: 'Mode'
+      label: 'Mode',
+      content: client=>cap(client.mode)
     },
     {
       path: 'dateInsured',
@@ -398,7 +410,7 @@ const Reports = props => {
       path: 'firstname',
       label: 'Fullname',
       content: client =>
-        `${client.firstname}, ${client.lastname} ${client.middlename}`
+        `${cap(client.firstname)}, ${cap(client.lastname)} ${cap(client.middlename)}`
     },
     {
       path: 'birthdate',
@@ -407,7 +419,8 @@ const Reports = props => {
     },
     {
       path: 'gender',
-      label: 'Gender'
+      label: 'Gender',
+      content: client=>cap(client.gender)
     },
     {
       path: 'codeNo',
@@ -459,11 +472,13 @@ const Reports = props => {
 
     {
       path: 'position',
-      label: 'Position'
+      label: 'Position',
+      content: user=>cap(user.position)
     },
     {
       path: 'profile.branch.name',
-      label: 'Branch'
+      label: 'Branch',
+      content: user=>cap(user.profile.branch.name)
     },
     {
       path: 'profile.codeNo',
@@ -500,7 +515,8 @@ const Reports = props => {
     },
     {
       path: 'user.position',
-      label: 'Position'
+      label: 'Position',
+content: user=>cap(user.position)
     },
     {
       path: 'dateTimeIn',

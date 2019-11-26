@@ -1,8 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import Table from '../../common/table'
-import {NavLink} from 'react-router-dom'
-
-import {sortBy, toElipse} from '../../../services/utilsService'
+import {sortBy, toElipse, cap} from '../../../services/utilsService'
 
 const TableBranch = ({branches, setBranches, ...props}) => {
 	const [sortColumn, setSortColumn] = useState({path: 'name', order: 'asc'})
@@ -22,16 +20,19 @@ const TableBranch = ({branches, setBranches, ...props}) => {
 	const columns = [
 		{
 			path: 'name',
-			label: 'Name'
+			label: 'Name',
+			content: branch => cap(branch.name)
 		},
 		{
 			path: 'manager',
-			label: 'Manager'
+			label: 'Manager',
+			content: branch => cap(branch.manager)
 		},
 
 		{
 			path: 'address',
-			label: 'Address'
+			label: 'Address',
+			content: branch => cap(branch.address)
 		},
 		{
 			path: 'contact',

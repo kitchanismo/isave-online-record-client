@@ -39,7 +39,7 @@ const Help = () => {
 					{auth.canAccess('admin') && (
 						<SettingHelp instruction={instruction}></SettingHelp>
 					)}
-					{auth.canAccess('admin') && (
+					{auth.canAccess('admin', 'general') && (
 						<InsentiveHelp instruction={instruction}></InsentiveHelp>
 					)}
 				</div>

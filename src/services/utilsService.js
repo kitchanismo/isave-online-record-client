@@ -67,6 +67,23 @@ export const joiMobileNumber = label => {
 		.label(label)
 }
 
+export function labelPosition(position) {
+	switch (position) {
+		case 'admin':
+			return 'System Administrator'
+		case 'general':
+			return 'General Manager'
+		case 'manager':
+			return 'Branch Manager'
+		case 'sales':
+			return 'Sales Officer'
+		case 'promo':
+			return 'Promo Officer'
+		default:
+			return ''
+	}
+}
+
 export const mapToSelect = ({id, name}) => {
 	return {id, label: cap(name), value: name}
 }

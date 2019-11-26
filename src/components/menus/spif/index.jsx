@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import Table from '../../common/table'
-import {toElipse, sortBy} from '../../../services/utilsService'
+import {toElipse, sortBy, cap} from '../../../services/utilsService'
 import {
 	getInsentives,
 	deleteInsentive
@@ -55,18 +55,22 @@ const SPIF = props => {
 			label: 'Employee Name',
 			content: ({user}) => {
 				return toElipse(
-					`${user.profile.lastname}, ${user.profile.middlename} ${user.profile.firstname}`,
+					`${cap(user.profile.lastname)}, ${cap(user.profile.middlename)} ${cap(
+						user.profile.firstname
+					)}`,
 					25
 				)
 			}
 		},
 		{
 			path: 'user.profile.branch.name',
-			label: 'Branch'
+			label: 'Branch',
+			content: incentive => cap(incentive.user.profile.branch.name)
 		},
 		{
 			path: 'user.position',
-			label: 'Position'
+			label: 'Position',
+			content: incentive => cap(incentive.user.position)
 		},
 		{
 			path: 'user.profile.codeNo',
@@ -80,7 +84,8 @@ const SPIF = props => {
 		{
 			path: 'prize',
 			label: 'Prize Reward',
-			content: insentive => `₱${insentive.prize}`
+			content: insentive =>
+				`₱${insentive.prize.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`
 		},
 		{
 			path: 'month',

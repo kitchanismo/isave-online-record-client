@@ -3,7 +3,7 @@ import Chart from 'react-apexcharts'
 import {NavLink} from 'react-router-dom'
 import {theme} from '../../../config.json'
 import useReport from '../../../hooks/useReport'
-import {formatDate, toElipse} from '../../../services/utilsService'
+import {formatDate, toElipse, cap} from '../../../services/utilsService'
 import {getStatistics} from '../../../services/clientService'
 import Spinner from './../../common/spinner'
 import {getInsentives} from '../../../services/insentiveService.js'
@@ -170,7 +170,9 @@ const Charts = props => {
 										to={toView(client.remarks)}
 									>
 										{toTrim(
-											`${client.lastname}, ${client.firstname} ${client.middlename}`
+											`${cap(client.lastname)}, ${cap(client.firstname)} ${cap(
+												client.middlename
+											)}`
 										)}
 									</NavLink>
 									<span
@@ -216,11 +218,16 @@ const Charts = props => {
 										to={'/spif/' + insentive.id}
 									>
 										{toTrim(
-											`${insentive.user.profile.lastname}, ${insentive.user.profile.firstname} ${insentive.user.profile.middlename}`
+											`${cap(insentive.user.profile.lastname)}, ${cap(
+												insentive.user.profile.firstname
+											)} ${cap(insentive.user.profile.middlename)}`
 										)}
 									</NavLink>
 									<span className={`badge badge-info badge-pill`}>
-										₱{insentive.prize}
+										₱
+										{insentive.prize
+											.toFixed(2)
+											.replace(/\d(?=(\d{3})+\.)/g, '$&,')}
 									</span>
 								</li>
 							))}
@@ -233,7 +240,11 @@ const Charts = props => {
 					</ul>
 				</div>
 
-				<div className='row d-flex mt-5 justify-content-around'>
+				<div
+					className={`row d-flex ${
+						isMobile ? 'mt-2' : 'mt-5'
+					} justify-content-around`}
+				>
 					<Chart
 						key='Sales'
 						type='line'

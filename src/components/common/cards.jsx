@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
-import Card from './card'
 import _ from 'lodash'
 
-const Cards = ({items, columns, props}) => {
+const Cards = ({items, columns}) => {
 	const renderData = (item, column) => {
 		if (column.content) return column.content(item)
 

@@ -10,6 +10,8 @@ const AuthRoute = ({
 	component: Component,
 	render,
 	isNotAdmin,
+	isGeneral,
+	isManager,
 	...rest
 }) => {
 	return (
@@ -27,18 +29,39 @@ const AuthRoute = ({
 					)
 
 				if (
+					!isNotAdmin &&
+					!isAdminOrManager &&
+					!isAdmin &&
+					!isGeneral &&
+					!isManager
+				) {
+					return Component ? <Component {...props} /> : render(props)
+				}
+
+				if (
 					isAdminOrManager &&
 					!auth.canAccess('admin', 'manager', 'general')
 				) {
 					return <Redirect to='/not-found' />
 				}
-				if (isAdmin && !auth.canAccess('admin')) {
-					return <Redirect to='/not-found' />
+
+				if (isAdmin && auth.canAccess('admin')) {
+					return Component ? <Component {...props} /> : render(props)
 				}
-				if (isNotAdmin && auth.canAccess('admin')) {
-					return <Redirect to='/not-found' />
+
+				if (isGeneral && auth.canAccess('general')) {
+					return Component ? <Component {...props} /> : render(props)
 				}
-				return Component ? <Component {...props} /> : render(props)
+
+				if (isManager && auth.canAccess('manager')) {
+					return Component ? <Component {...props} /> : render(props)
+				}
+
+				if (isNotAdmin && !auth.canAccess('admin')) {
+					return Component ? <Component {...props} /> : render(props)
+				}
+
+				return <Redirect to='/not-found' />
 			}}
 		/>
 	)

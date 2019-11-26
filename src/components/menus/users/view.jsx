@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {getUser} from './../../../services/userService'
-import {cap, formatDate} from '../../../services/utilsService'
+import {cap, formatDate, labelPosition} from '../../../services/utilsService'
 import {appUrl} from '../../../config.json'
 import Spinner from '../../common/spinner'
 import {useMedia} from 'react-use'
@@ -104,23 +104,23 @@ const ViewUser = props => {
 								<br></br>
 								<p className='card-subtitle'>
 									Position:&nbsp;
-									<span className='text-secondary'>{cap(user.position)}</span>
+									<span className='text-secondary'>
+										{labelPosition(user.position)}
+									</span>
 								</p>
 								<br></br>
 								<p className='card-subtitle'>
 									Branch:&nbsp;
 									<span className='text-secondary'>
-										{cap(
-											user.profile.branch ? user.profile.branch.name : 'All'
-										)}
+										{user.profile.branch
+											? cap(user.profile.branch.name)
+											: 'All'}
 									</span>
 								</p>
 								<br></br>
 								<p className='card-subtitle'>
 									License Code Number:&nbsp;
-									<span className='text-secondary'>
-										{cap(user.profile.codeNo)}
-									</span>
+									<span className='text-secondary'>{user.profile.codeNo}</span>
 								</p>
 
 								{isAgent() && (

@@ -3,7 +3,7 @@ import Table from '../../common/table'
 import {UserContext} from '../../../context'
 import Paginate from '../../common/paginate'
 import CustomModal from '../../common/modal'
-import {verifyUser, getLogs} from '../../../services/userService'
+import {verifyUser} from '../../../services/userService'
 import {cap, toElipse, labelPosition} from '../../../services/utilsService'
 import SearchForm from '../../common/searchForm'
 import {pagination} from '../../../config.json'
@@ -25,10 +25,6 @@ const Users = ({auth, ...props}) => {
 		onSetEnd,
 		onSetStatus
 	} = useContext(UserContext)
-
-	useEffect(() => {
-		getLogs().then(logs => console.log(logs))
-	}, [])
 
 	const [search, setSearch] = useState('')
 

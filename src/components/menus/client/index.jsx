@@ -469,7 +469,6 @@ const Reports = props => {
           ? `${user.profile.firstname}, ${user.profile.middlename} ${user.profile.lastname}`
           : ''
     },
-
     {
       path: 'position',
       label: 'Position',
@@ -478,7 +477,7 @@ const Reports = props => {
     {
       path: 'profile.branch.name',
       label: 'Branch',
-      content: user=>cap(user.profile.branch.name)
+      content: user=> user.profile.branch? cap(user.profile.branch.name): 'All'
     },
     {
       path: 'profile.codeNo',

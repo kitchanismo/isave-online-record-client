@@ -12,8 +12,8 @@ const Cards = ({items, columns}) => {
 			{items.map(item => (
 				<div key={item.id} className='card mb-2 px-0' style={{width: 'auto'}}>
 					<div className='card-body text-center'>
-						{columns.map(column => (
-							<React.Fragment>
+						{columns.map((column, i) => (
+							<React.Fragment key={i}>
 								{column.key !== 'actions' && (
 									<p className='card-title mt-2'>{column.label}:</p>
 								)}

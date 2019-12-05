@@ -33,6 +33,11 @@ export function getClientGPA(id) {
 	return http.get('/api/clients/show-gpa/' + id).then(data => data.data)
 }
 
+export function insuredYears() {
+	http.sendJwt(auth.jwt())
+	return http.get('/api/clients/insured-years/').then(data => data.data.years)
+}
+
 export function approved(id, client) {
 	http.sendJwt(auth.jwt())
 	return http.put('/api/clients/approved/' + id, {...client}).then(data => data)

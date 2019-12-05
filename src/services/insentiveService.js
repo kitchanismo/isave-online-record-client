@@ -6,9 +6,11 @@ export function storeInsentive(data) {
 	return http.post('/api/insentives', data).then(data => data.data)
 }
 
-export function getInsentives() {
+export function getInsentives(month = null) {
 	http.sendJwt(auth.jwt())
-	return http.get('/api/insentives').then(data => data.data.insentives)
+	return http
+		.get('/api/insentives?month=' + month)
+		.then(data => data.data.insentives)
 }
 
 export function getInsentive(id) {

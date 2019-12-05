@@ -78,10 +78,6 @@ const SPIF = props => {
 			content: incentive => labelPosition(incentive.user.position)
 		},
 		{
-			path: 'user.profile.codeNo',
-			label: 'Licence Code'
-		},
-		{
 			path: 'count',
 			label: 'Count Insured'
 		},
@@ -94,8 +90,11 @@ const SPIF = props => {
 		},
 		{
 			path: 'month',
-			label: 'Month/Year',
-			content: insentive => `${insentive.month}, ${insentive.year}`
+			label: 'Month'
+		},
+		{
+			path: 'year',
+			label: 'Year'
 		},
 		{
 			key: 'actions',

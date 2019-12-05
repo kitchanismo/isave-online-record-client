@@ -10,81 +10,86 @@ import {getInsentives} from '../../../services/insentiveService.js'
 import {useMedia} from 'react-use'
 
 const useOptions = title => {
+	const [options, setOptions] = useState({})
+
+	useEffect(() => {
+		setOptions({
+			theme: {
+				palette: 'palette5'
+			},
+			chart: {
+				id: 'basic-bar',
+				toolbar: {
+					show: false
+				}
+			},
+			xaxis: {
+				categories: [
+					'JAN',
+					'FEB',
+					'MAR',
+					'APR',
+					'MAY',
+					'JUN',
+					'JUL',
+					'AUG',
+					'SEP',
+					'OCT',
+					'NOV',
+					'DEC'
+				]
+			},
+			title: {
+				text: title,
+				align: 'center',
+				margin: 10,
+				offsetX: 0,
+				offsetY: 0,
+				floating: false,
+				style: {
+					fontSize: '20px',
+					color: theme.secondary
+				}
+			},
+			grid: {
+				show: true,
+				borderColor: 'black',
+				strokeDashArray: 1,
+				position: 'back',
+				xaxis: {
+					lines: {
+						show: false
+					}
+				},
+				yaxis: {
+					lines: {
+						show: false
+					}
+				},
+				row: {
+					colors: undefined,
+					opacity: 0.5
+				},
+				column: {
+					colors: undefined,
+					opacity: 0.5
+				},
+				padding: {
+					top: 0,
+					right: 0,
+					bottom: 0,
+					left: 0
+				}
+			}
+		})
+	}, [title])
+
 	const [series, setSeries] = useState([
 		{
 			name: 'series-1',
 			data: []
 		}
 	])
-	const [options] = useState({
-		theme: {
-			palette: 'palette5'
-		},
-		chart: {
-			id: 'basic-bar',
-			toolbar: {
-				show: false
-			}
-		},
-		xaxis: {
-			categories: [
-				'JAN',
-				'FEB',
-				'MAR',
-				'APR',
-				'MAY',
-				'JUN',
-				'JUL',
-				'AUG',
-				'SEP',
-				'OCT',
-				'NOV',
-				'DEC'
-			]
-		},
-		title: {
-			text: title,
-			align: 'center',
-			margin: 10,
-			offsetX: 0,
-			offsetY: 0,
-			floating: false,
-			style: {
-				fontSize: '20px',
-				color: theme.secondary
-			}
-		},
-		grid: {
-			show: true,
-			borderColor: 'black',
-			strokeDashArray: 1,
-			position: 'back',
-			xaxis: {
-				lines: {
-					show: false
-				}
-			},
-			yaxis: {
-				lines: {
-					show: false
-				}
-			},
-			row: {
-				colors: undefined,
-				opacity: 0.5
-			},
-			column: {
-				colors: undefined,
-				opacity: 0.5
-			},
-			padding: {
-				top: 0,
-				right: 0,
-				bottom: 0,
-				left: 0
-			}
-		}
-	})
 
 	return {options, series, setSeries}
 }
@@ -98,27 +103,34 @@ const Charts = props => {
 
 	const [isLoadedStat, setIsLoadedStat] = useState(false)
 
-	const currentYear = new Date(Date.now()).getFullYear()
+	const [isLoadedIncentive, setIsLoadedIncentive] = useState(false)
 
 	const {options: fspOptions, series: fsp, setSeries: setFSP} = useOptions(
-		currentYear +
+		props.data.year +
 			(isMobile ? ' FSP Statistic' : ' Future Savings Plan Statistic')
 	)
 
 	const {options: gpaOptions, series: gpa, setSeries: setGPA} = useOptions(
-		currentYear +
+		props.data.year +
 			(isMobile ? ' GPA Statistic' : ' Group Personal Accident Statistic')
 	)
 
 	useEffect(() => {
+		setIsLoadedIncentive(false)
+		getInsentives(props.data.month).then(data => {
+			setInsentives(data)
+			setIsLoadedIncentive(true)
+		})
+	}, [props.data.month])
+
+	useEffect(() => {
 		setIsLoadedStat(false)
-		getStatistics(currentYear).then(data => {
+		getStatistics(props.data.year).then(data => {
 			setFSP([{name: 'count', data: data.fsp}])
 			setGPA([{name: 'count', data: data.gpa}])
 			setIsLoadedStat(true)
 		})
-		getInsentives().then(data => setInsentives(data))
-	}, [])
+	}, [props.data.year])
 
 	const remarksColor = remarks => {
 		if (remarks === 'near expiration') return 'warning'
@@ -140,7 +152,10 @@ const Charts = props => {
 
 	const chart = () => (
 		<React.Fragment>
-			<Spinner isLoaded={isLoaded && isLoadedStat} className='spinner'>
+			<Spinner
+				isLoaded={isLoaded && isLoadedStat && isLoadedIncentive}
+				className='spinner'
+			>
 				<div
 					className={`row d-flex justify-content-around mx-${
 						isMobile ? '0' : '2'
@@ -195,7 +210,7 @@ const Charts = props => {
 					<ul className={`list-group ${isMobile ? 'mt-3' : ''}`}>
 						<li className='header-list pb-0 list-group-item d-flex justify-content-between align-items-center'>
 							<span className='font-weight-bold'>
-								Sales Performance Incentive Fund
+								Sales Performance Incentive Fund - {cap(props.data.month)}
 							</span>
 							<span className='badge badge-danger badge-pill'>
 								{insentives.length ? insentives.length : ''}
@@ -263,7 +278,7 @@ const Charts = props => {
 			</Spinner>
 			<style jsx=''>{`
 				.list-group {
-					width: 400px !important;
+					width: 420px !important;
 				}
 
 				.header-list {

@@ -46,7 +46,7 @@ const Users = ({auth, ...props}) => {
 					`${cap(user.profile.firstname)}, ${cap(
 						user.profile.middlename
 					)} ${cap(user.profile.lastname)}`,
-					25
+					23
 				)
 			}
 		},
@@ -59,8 +59,12 @@ const Users = ({auth, ...props}) => {
 		{
 			path: 'profile.branch.name',
 			label: 'Branch',
-			content: user =>
-				user.profile.branch ? cap(user.profile.branch.name) : 'All'
+			content: user => {
+				if (user.position === 'admin' || user.position === 'general')
+					return 'All'
+
+				return user.profile.branch ? cap(user.profile.branch.name) : 'N/A'
+			}
 		},
 		{
 			path: 'profile.codeNo',
@@ -139,9 +143,11 @@ const Users = ({auth, ...props}) => {
 			await doDelete(selectedUser)
 
 			if (selectedUser.position === 'manager') {
-				toast.info(
-					`${cap(selectedUser.profile.branch.name)} branch is now available`
-				)
+				if (selectedUser.profile.branch) {
+					toast.info(
+						`${cap(selectedUser.profile.branch.name)} branch is now available`
+					)
+				}
 			}
 
 			setSelectedUser({})

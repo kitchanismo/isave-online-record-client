@@ -35,6 +35,13 @@ const ViewUser = props => {
 			user.position !== 'general'
 		)
 	}
+
+	const showBranch = user => {
+		if (user.position === 'admin' || user.position === 'general') return 'All'
+
+		return user.profile.branch ? cap(user.profile.branch.name) : 'N/A'
+	}
+
 	return (
 		<React.Fragment>
 			<div className='d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom'>
@@ -111,11 +118,7 @@ const ViewUser = props => {
 								<br></br>
 								<p className='card-subtitle'>
 									Branch:&nbsp;
-									<span className='text-secondary'>
-										{user.profile.branch
-											? cap(user.profile.branch.name)
-											: 'All'}
-									</span>
+									<span className='text-secondary'>{showBranch(user)}</span>
 								</p>
 								<br></br>
 								<p className='card-subtitle'>

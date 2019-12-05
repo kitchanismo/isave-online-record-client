@@ -60,6 +60,7 @@ function removeTokens() {
 function getDecodeToken() {
 	try {
 		const token = localStorage.getItem('access-token')
+
 		return {...jwtDecode(token)}
 	} catch (ex) {
 		return null
